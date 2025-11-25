@@ -1,0 +1,46 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FeedingApp.Views.AnimalsPage"
+             Title="Állatok"
+             x:DataType="viewModels:AnimalsViewModel"
+             xmlns:viewModels="clr-namespace:FeedingApp.ViewModels">
+
+    <StackLayout Padding="10" Spacing="10">
+        <Button Text="Új állat"
+                Command="{Binding AddAnimalCommand}" />
+
+        <CollectionView ItemsSource="{Binding Animals}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedAnimal}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackLayout>
+                            <Label Text="{Binding Name}" FontAttributes="Bold" />
+                            <Label Text="{Binding Species}" FontSize="12" />
+                            <Label Text="{Binding FeedingIntervalDays,
+                                                  StringFormat='Etetés: {0} naponta'}"
+                                   FontSize="10" />
+                        </StackLayout>
+
+                        <StackLayout Grid.Column="1" Orientation="Horizontal">
+                            <Button Text="✏"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                      Path=BindingContext.EditAnimalCommand}"
+                                    CommandParameter="{Binding}" />
+                            <Button Text="🗑"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                      Path=BindingContext.DeleteAnimalCommand}"
+                                    CommandParameter="{Binding}" />
+                        </StackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>

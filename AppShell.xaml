@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="FeedingApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:FeedingApp"
+    xmlns:views="clr-namespace:FeedingApp.Views"
+    Title="FeedingApp">
+
+    <TabBar>
+        <ShellContent Title="Állatok"
+                  ContentTemplate="{DataTemplate views:AnimalsPage}"
+                  Icon="animals.png" />
+        <ShellContent Title="Naptár"
+                  ContentTemplate="{DataTemplate views:CalendarPage}"
+                  Icon="calendar.png" />
+        <ShellContent Title="Galéria"
+                  ContentTemplate="{DataTemplate views:GalleryPage}"
+                  Icon="gallery.png" />
+    </TabBar>
+
+</Shell>

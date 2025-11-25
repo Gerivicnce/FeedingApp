@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FeedingApp.Views.EditAnimalPage"
+             Title="Állat szerkesztése">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="12">
+
+            <Label Text="Állat adatai"
+                   FontAttributes="Bold"
+                   FontSize="20"
+                   HorizontalOptions="Center" />
+
+            <Entry Placeholder="Név"
+                   Text="{Binding Name}" />
+
+            <Entry Placeholder="Faj (pl. szakállas agáma)"
+                   Text="{Binding Species}" />
+
+            <Entry Placeholder="Etetés gyakoriság (naponta)"
+                   Keyboard="Numeric"
+                   Text="{Binding FeedingIntervalDays}" />
+
+            <Editor Placeholder="Megjegyzés"
+                    AutoSize="TextChanges"
+                    HeightRequest="100"
+                    Text="{Binding Notes}" />
+
+            <HorizontalStackLayout Spacing="10"
+                                   Margin="0,20,0,0"
+                                   HorizontalOptions="Center">
+                <Button Text="Mentés"
+                        Clicked="OnSaveClicked" />
+                <Button Text="Mégse"
+                        Clicked="OnCancelClicked"
+                        BackgroundColor="LightGray"
+                        TextColor="Black" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+
