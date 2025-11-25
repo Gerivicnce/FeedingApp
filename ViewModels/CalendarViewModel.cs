@@ -74,6 +74,20 @@ namespace FeedingApp.ViewModels
             }
         }
 
+        private string _currentNotes = string.Empty;
+        public string CurrentNotes
+        {
+            get => _currentNotes;
+            set
+            {
+                if (_currentNotes != value)
+                {
+                    _currentNotes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ICommand LoadCommand { get; }
         public ICommand LoadEventsCommand { get; }
         public ICommand SaveFeedingCommand { get; }
@@ -134,7 +148,8 @@ namespace FeedingApp.ViewModels
                 AnimalId = SelectedAnimal.Id,
                 FeedingTime = SelectedDate.Date + DateTime.Now.TimeOfDay,
                 WeightGrams = CurrentWeight,
-                PhotoPath = CurrentPhotoPath
+                PhotoPath = CurrentPhotoPath,
+                Notes = CurrentNotes
             };
 
             await _db.SaveEventAsync(ev);
@@ -142,6 +157,7 @@ namespace FeedingApp.ViewModels
 
             CurrentWeight = null;
             CurrentPhotoPath = string.Empty;
+            CurrentNotes = string.Empty;
         }
 
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>

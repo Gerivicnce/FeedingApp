@@ -19,18 +19,13 @@
                 ItemDisplayBinding="{Binding Name}"
                 SelectedItem="{Binding SelectedAnimal}" />
 
-        <!-- Tömeg + fotó + mentés -->
+        <!-- Fotó készítése és etetés felvétele -->
         <HorizontalStackLayout Grid.Row="2" Spacing="8">
-            <Entry Placeholder="Tömeg (g)"
-                   Keyboard="Numeric"
-                   WidthRequest="120"
-                   Text="{Binding CurrentWeight}" />
-
             <Button Text="📷 Fotó"
                     Clicked="OnTakePhotoClicked" />
 
-            <Button Text="Mentés"
-                    Command="{Binding SaveFeedingCommand}" />
+            <Button Text="Új etetés"
+                    Clicked="OnAddFeedingClicked" />
         </HorizontalStackLayout>
 
         <!-- Kamera előnézet -->
