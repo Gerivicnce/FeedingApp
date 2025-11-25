@@ -1,10 +1,9 @@
+using CommunityToolkit.Maui.Views;
 using FeedingApp.Services;
 using FeedingApp.ViewModels;
-using Microsoft.Maui.Media;
 using Microsoft.Maui.Storage;
 using System;
 using System.IO;
-
 
 namespace FeedingApp.Views;
 
@@ -38,20 +37,14 @@ public partial class CalendarPage : ContentPage
     {
         try
         {
-            if (!MediaPicker.Default.IsCaptureSupported)
-            {
-                await DisplayAlert("Hiba", "Ezen az eszközön nem támogatott a kamera.", "OK");
-                return;
-            }
-
-            var photo = await MediaPicker.Default.CapturePhotoAsync();
-            if (photo == null)
+            var photoStream = await CameraViewControl.TakePhotoAsync();
+            if (photoStream == null)
                 return;
 
             var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
             var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
-            await using var stream = await photo.OpenReadAsync();
+            await using var stream = photoStream;
             await using var fileStream = File.OpenWrite(filePath);
             await stream.CopyToAsync(fileStream);
 
@@ -59,7 +52,7 @@ public partial class CalendarPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Hiba", $"Nem sikerült fotót készíteni: {ex.Message}", "OK");
+            await DisplayAlert("Hiba", $"Nem sikerlt fott kszteni: {ex.Message}", "OK");
         }
     }
 }
