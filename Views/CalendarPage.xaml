@@ -34,7 +34,7 @@
 
         <!-- Az adott nap etetései -->
         <CollectionView Grid.Row="3"
-                        ItemsSource="{Binding EventsForSelectedDate}">
+                        ItemsSource="{Binding Events}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout Padding="5">
