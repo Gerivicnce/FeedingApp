@@ -1,8 +1,9 @@
-﻿using FeedingApp.Models;
+using FeedingApp.Models;
 using FeedingApp.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -13,7 +14,7 @@ namespace FeedingApp.ViewModels
         private readonly DatabaseService _db;
 
         public ObservableCollection<Animal> Animals { get; } = new();
-        public ObservableCollection<FeedingEvent> EventsForSelectedDate { get; } = new();
+        public ObservableCollection<FeedingEvent> Events { get; } = new();
 
         private DateTime _selectedDate = DateTime.Today;
         public DateTime SelectedDate
@@ -24,7 +25,8 @@ namespace FeedingApp.ViewModels
                 if (_selectedDate != value)
                 {
                     _selectedDate = value;
-                    OnPropertyChanged(nameof(SelectedDate));
+                    OnPropertyChanged();
+                    _ = LoadEventsAsync();
                 }
             }
         }
@@ -38,7 +40,8 @@ namespace FeedingApp.ViewModels
                 if (_selectedAnimal != value)
                 {
                     _selectedAnimal = value;
-                    OnPropertyChanged(nameof(SelectedAnimal));
+                    OnPropertyChanged();
+                    _ = LoadEventsAsync();
                 }
             }
         }
@@ -52,7 +55,7 @@ namespace FeedingApp.ViewModels
                 if (_currentWeight != value)
                 {
                     _currentWeight = value;
-                    OnPropertyChanged(nameof(CurrentWeight));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -66,7 +69,7 @@ namespace FeedingApp.ViewModels
                 if (_currentPhotoPath != value)
                 {
                     _currentPhotoPath = value;
-                    OnPropertyChanged(nameof(CurrentPhotoPath));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -89,6 +92,12 @@ namespace FeedingApp.ViewModels
         private async Task LoadAsync()
         {
             await LoadAnimalsAsync();
+
+            if (SelectedAnimal == null && Animals.Count > 0)
+            {
+                SelectedAnimal = Animals[0];
+            }
+
             await LoadEventsAsync();
         }
 
@@ -102,13 +111,17 @@ namespace FeedingApp.ViewModels
 
         private async Task LoadEventsAsync()
         {
-            EventsForSelectedDate.Clear();
-            var all = await _db.GetAllEventsAsync();
+            Events.Clear();
 
-            foreach (var e in all)
+            if (SelectedAnimal == null)
+                return;
+
+            var events = await _db.GetEventsByAnimalAsync(SelectedAnimal.Id);
+
+            foreach (var e in events)
             {
                 if (e.FeedingTime.Date == SelectedDate.Date)
-                    EventsForSelectedDate.Add(e);
+                    Events.Add(e);
             }
         }
 
@@ -119,7 +132,7 @@ namespace FeedingApp.ViewModels
             var ev = new FeedingEvent
             {
                 AnimalId = SelectedAnimal.Id,
-                FeedingTime = SelectedDate,
+                FeedingTime = SelectedDate.Date + DateTime.Now.TimeOfDay,
                 WeightGrams = CurrentWeight,
                 PhotoPath = CurrentPhotoPath
             };
@@ -127,12 +140,11 @@ namespace FeedingApp.ViewModels
             await _db.SaveEventAsync(ev);
             await LoadEventsAsync();
 
-            // űrlap resetelése
             CurrentWeight = null;
             CurrentPhotoPath = string.Empty;
         }
 
-        private void OnPropertyChanged(string propertyName) =>
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
