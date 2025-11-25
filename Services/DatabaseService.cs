@@ -35,6 +35,9 @@ namespace FeedingApp.Services
             _db.DeleteAsync(animal);
 
         // ---- FeedingEvent CRUD ----
+        public Task<FeedingEvent?> GetEventAsync(int id) =>
+            _db.FindAsync<FeedingEvent>(id);
+
         public Task<List<FeedingEvent>> GetEventsByAnimalAsync(int animalId) =>
             _db.Table<FeedingEvent>()
                .Where(e => e.AnimalId == animalId)
