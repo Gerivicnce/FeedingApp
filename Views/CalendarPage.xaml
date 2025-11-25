@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FeedingApp.Views.CalendarPage"
              Title="Naptár">
 
-    <Grid Padding="10" RowDefinitions="Auto,Auto,Auto,*,Auto">
+    <Grid Padding="10" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
 
         <!-- Dátum választó -->
         <DatePicker Grid.Row="0"
@@ -32,8 +33,15 @@
                     Command="{Binding SaveFeedingCommand}" />
         </HorizontalStackLayout>
 
+        <!-- Kamera előnézet -->
+        <toolkit:CameraView x:Name="CameraViewControl"
+                            Grid.Row="3"
+                            CaptureMode="Photo"
+                            HeightRequest="220"
+                            HorizontalOptions="Fill" />
+
         <!-- Az adott nap etetései -->
-        <CollectionView Grid.Row="3"
+        <CollectionView Grid.Row="4"
                         ItemsSource="{Binding Events}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -47,7 +55,7 @@
         </CollectionView>
 
         <!-- Opció: aktuális fotó elérési útja -->
-        <Label Grid.Row="4"
+        <Label Grid.Row="5"
                Text="{Binding CurrentPhotoPath}"
                FontSize="10" />
     </Grid>
