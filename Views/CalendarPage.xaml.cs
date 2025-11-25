@@ -55,4 +55,10 @@ public partial class CalendarPage : ContentPage
             await DisplayAlert("Hiba", $"Nem sikerlt fott kszteni: {ex.Message}", "OK");
         }
     }
+
+    private void OnAddFeedingClicked(object sender, EventArgs e)
+    {
+        var popup = new FeedingPopup(_vm);
+        this.ShowPopup(popup);
+    }
 }
