@@ -30,10 +30,9 @@
 
         <!-- Kamera előnézet -->
         <toolkit:CameraView x:Name="CameraViewControl"
-                            Grid.Row="3"
-                            CaptureMode="Photo"
-                            HeightRequest="220"
-                            HorizontalOptions="Fill" />
+                    Grid.Row="3"
+                    HeightRequest="220"
+                    HorizontalOptions="Fill" />
 
         <!-- Az adott nap etetései -->
         <CollectionView Grid.Row="4"

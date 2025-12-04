@@ -21,7 +21,7 @@ namespace FeedingApp.Services
         public Task<List<Animal>> GetAnimalsAsync() =>
         _db.Table<Animal>().ToListAsync();
 
-        public Task<Animal?> GetAnimalAsync(int id) =>
+        public Task<Animal> GetAnimalAsync(int id) =>
             _db.FindAsync<Animal>(id);
 
         public Task<int> SaveAnimalAsync(Animal animal)

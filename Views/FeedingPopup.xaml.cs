@@ -11,13 +11,13 @@ public partial class FeedingPopup : Popup
         BindingContext = viewModel;
     }
 
-    private void OnSaveClicked(object sender, EventArgs e)
+    private async void OnSaveClicked(object sender, EventArgs e)
     {
         if (BindingContext is CalendarViewModel vm && vm.SaveFeedingCommand.CanExecute(null))
         {
             vm.SaveFeedingCommand.Execute(null);
         }
 
-        Close();
+        await CloseAsync(); 
     }
 }

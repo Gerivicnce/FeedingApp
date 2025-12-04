@@ -47,7 +47,7 @@ public partial class EditAnimalPage : ContentPage
         // egyszerű validáció: legyen név
         if (string.IsNullOrWhiteSpace(_animal.Name))
         {
-            await DisplayAlert("Hiba", "A név megadása kötelező.", "OK");
+            await DisplayAlertAsync("Hiba", "A név megadása kötelező.", "OK");
             return;
         }
 

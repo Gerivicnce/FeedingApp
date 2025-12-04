@@ -103,7 +103,7 @@ namespace FeedingApp.ViewModels
             SaveFeedingCommand = new Command(async () => await SaveFeedingAsync());
         }
 
-        private async Task LoadAsync()
+        public async Task LoadAsync()
         {
             await LoadAnimalsAsync();
 
