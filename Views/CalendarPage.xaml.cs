@@ -56,7 +56,7 @@ public partial class CalendarPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Hiba", $"Nem sikerült fotót készíteni: {ex.Message}", "OK");
+            await DisplayAlert("Hiba", $"Nem sikerült fotót készíteni: {ex.Message}", "OK");
         }
     }
 
@@ -76,7 +76,7 @@ public partial class CalendarPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Hiba", $"Nem sikerült fotót menteni: {ex.Message}", "OK");
+            await DisplayAlert("Hiba", $"Nem sikerült fotót menteni: {ex.Message}", "OK");
         }
     }
 
