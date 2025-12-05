@@ -7,82 +7,84 @@ using Microsoft.Maui.Storage;
 using System;
 using System.IO;
 using System.Threading;
-namespace FeedingApp.Views;
 
-public partial class CalendarPage : ContentPage
+namespace FeedingApp.Views
 {
-    private readonly CalendarViewModel _vm;
-
-    public CalendarPage()
+    public partial class CalendarPage : ContentPage
     {
-        InitializeComponent();
+        private readonly CalendarViewModel _vm;
 
-        var db = new DatabaseService();
-        _vm = new CalendarViewModel(db);
-        BindingContext = _vm;
-
-        // kamera event feliratkozás
-        CameraViewControl.MediaCaptured += OnMediaCaptured;
-    }
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        try
+        public CalendarPage()
         {
-            await _vm.LoadAsync();
+            InitializeComponent();
+
+            var db = new DatabaseService();
+            _vm = new CalendarViewModel(db);
+            BindingContext = _vm;
+
+            // kamera event feliratkozs
+            CameraViewControl.MediaCaptured += OnMediaCaptured;
         }
-        catch (Exception ex)
+
+        protected override async void OnAppearing()
         {
-            await DisplayAlert("Hiba", $"A naptár betöltése közben hiba történt: {ex.Message}", "OK");
+            base.OnAppearing();
+
+            try
+            {
+                await _vm.LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Hiba", $"A naptr betltse kzben hiba trtnt: {ex.Message}", "OK");
+            }
         }
-    }
 
-    private void OnDateSelected(object sender, DateChangedEventArgs e)
-    {
-        if (_vm.LoadEventsCommand.CanExecute(null))
-            _vm.LoadEventsCommand.Execute(null);
-    }
-
-    private async void OnTakePhotoClicked(object sender, EventArgs e)
-    {
-        try
+        private void OnDateSelected(object sender, DateChangedEventArgs e)
         {
-            using var cts = new CancellationTokenSource();
-            // Ez csak elindítja a fotó készítést,
-            // a stream az OnMediaCaptured-ben jön meg
-            await CameraViewControl.CaptureImage(cts.Token);
+            if (_vm.LoadEventsCommand.CanExecute(null))
+                _vm.LoadEventsCommand.Execute(null);
         }
-        catch (Exception ex)
+
+        private async void OnTakePhotoClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Hiba", $"Nem sikerült fotót készíteni: {ex.Message}", "OK");
+            try
+            {
+                using var cts = new CancellationTokenSource();
+                // Ez csak elindtja a fot ksztst,
+                // a stream az OnMediaCaptured-ben jn meg
+                await CameraViewControl.CaptureImage(cts.Token);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Hiba", $"Nem sikerlt fott kszteni: {ex.Message}", "OK");
+            }
         }
-    }
 
-    // Itt kapod meg ténylegesen a fotó streamjét
-    private async void OnMediaCaptured(object? sender, MediaCapturedEventArgs e)
-    {
-        try
+        // Itt kapod meg tnylegesen a fot streamjt
+        private async void OnMediaCaptured(object? sender, MediaCapturedEventArgs e)
         {
-            var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-            var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+            try
+            {
+                var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
-            await using var stream = e.Media;
-            await using var fileStream = File.OpenWrite(filePath);
-            await stream.CopyToAsync(fileStream);
+                await using var stream = e.Media;
+                await using var fileStream = File.OpenWrite(filePath);
+                await stream.CopyToAsync(fileStream);
 
-            _vm.CurrentPhotoPath = filePath;
+                _vm.CurrentPhotoPath = filePath;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Hiba", $"Nem sikerlt fott menteni: {ex.Message}", "OK");
+            }
         }
-        catch (Exception ex)
+
+        private void OnAddFeedingClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Hiba", $"Nem sikerült fotót menteni: {ex.Message}", "OK");
+            var popup = new FeedingPopup(_vm);
+            this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
         }
-    }
-
-    private void OnAddFeedingClicked(object sender, EventArgs e)
-    {
-        var popup = new FeedingPopup(_vm);
-        this.ShowPopup(popup);   // lásd a következõ pontot a using-hoz
     }
 }
