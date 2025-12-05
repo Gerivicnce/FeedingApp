@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
+             xmlns:models="clr-namespace:FeedingApp.Models"
              x:Class="FeedingApp.Views.GalleryPage"
-             Title="Galéria">
+             Title="Galéria"
+             x:DataType="viewModels:GalleryViewModel">
 
     <CollectionView ItemsSource="{Binding Photos}">
         <CollectionView.ItemTemplate>
-            <DataTemplate>
+            <DataTemplate x:DataType="models:FeedingEvent">
                 <Grid Padding="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="200" />

@@ -21,8 +21,8 @@ namespace FeedingApp.Services
         public Task<List<Animal>> GetAnimalsAsync() =>
         _db.Table<Animal>().ToListAsync();
 
-        public Task<Animal> GetAnimalAsync(int id) =>
-            _db.FindAsync<Animal>(id);
+        public async Task<Animal?> GetAnimalAsync(int id) =>
+            await _db.FindAsync<Animal>(id);
 
         public Task<int> SaveAnimalAsync(Animal animal)
         {
@@ -35,8 +35,8 @@ namespace FeedingApp.Services
             _db.DeleteAsync(animal);
 
         // ---- FeedingEvent CRUD ----
-        public Task<FeedingEvent?> GetEventAsync(int id) =>
-            _db.FindAsync<FeedingEvent>(id);
+        public async Task<FeedingEvent?> GetEventAsync(int id) =>
+            await _db.FindAsync<FeedingEvent>(id);
 
         public Task<List<FeedingEvent>> GetEventsByAnimalAsync(int animalId) =>
             _db.Table<FeedingEvent>()
