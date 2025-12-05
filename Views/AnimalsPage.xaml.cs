@@ -5,6 +5,7 @@ namespace FeedingApp.Views;
 public partial class AnimalsPage : ContentPage
 {
     private readonly AnimalsViewModel _vm;
+
     public AnimalsPage(AnimalsViewModel vm)
     {
         InitializeComponent();
@@ -12,6 +13,7 @@ public partial class AnimalsPage : ContentPage
         _vm = vm;
         BindingContext = _vm;
     }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

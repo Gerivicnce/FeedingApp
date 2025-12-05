@@ -1,96 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
 using FeedingApp.Models;
+using Microsoft.Maui.Storage;
+using SQLite;
 
 namespace FeedingApp.Services
 {
     public class DatabaseService : IDatabaseService
     {
         private readonly SQLiteAsyncConnection _db;
-        private readonly string _dbPath;
+
         public DatabaseService()
         {
-            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
-            _db = new SQLiteAsyncConnection(_dbPath);
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
+            _db = new SQLiteAsyncConnection(dbPath);
             _db.CreateTableAsync<Animal>().Wait();
             _db.CreateTableAsync<FeedingEvent>().Wait();
         }
+
         public Task<List<Animal>> GetAnimalsAsync() =>
-        _db.Table<Animal>().ToListAsync();
+            _db.Table<Animal>().ToListAsync();
 
-        public async Task<Animal?> GetAnimalAsync(int id) =>
-            await _db.FindAsync<Animal>(id);
+        public Task<Animal?> GetAnimalAsync(int id) =>
+            _db.FindAsync<Animal>(id);
 
-        public Task<int> SaveAnimalAsync(Animal animal)
+        public Task<int> SaveAnimalAsync(Animal animal) =>
+            animal.Id == 0
+                ? _db.InsertAsync(animal)
+                : _db.UpdateAsync(animal);
+
+        public async Task DeleteAnimalAsync(Animal animal)
         {
             if (animal.Id == 0)
-                return _db.InsertAsync(animal);
-            return _db.UpdateAsync(animal);
+                return;
+
+            await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
+            await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
         }
 
-        public async Task DeleteAnimalAsync(Animal animal) =>
-            await DeleteAnimalWithDebugAsync(animal);
-
-        public async Task<DeleteDebugInfo> DeleteAnimalWithDebugAsync(Animal? animal)
-        {
-            var info = new DeleteDebugInfo
-            {
-                DatabasePath = _dbPath,
-                AnimalId = animal?.Id ?? 0
-            };
-
-            if (animal == null || animal.Id == 0)
-            {
-                info.Summary = "Animal was null or unsaved.";
-                return info;
-            }
-
-            info.AnimalsBefore = await _db.Table<Animal>().CountAsync();
-            info.FeedingEventsBefore = await _db.Table<FeedingEvent>().CountAsync();
-            info.ExistedBefore = await _db.Table<Animal>()
-                                          .Where(a => a.Id == animal.Id)
-                                          .CountAsync() > 0;
-            info.EventsForAnimalBefore = await _db.Table<FeedingEvent>()
-                                                 .Where(e => e.AnimalId == animal.Id)
-                                                 .CountAsync();
-
-            info.FeedingEventsRemoved = await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
-            // Delete explicitly by primary key to avoid keeping stale rows around
-            // when the caller provides a different instance of the same entity.
-            info.AnimalRowsRemoved = await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
-
-            info.AnimalsAfter = await _db.Table<Animal>().CountAsync();
-            info.FeedingEventsAfter = await _db.Table<FeedingEvent>().CountAsync();
-            info.EventsForAnimalAfter = await _db.Table<FeedingEvent>()
-                                                .Where(e => e.AnimalId == animal.Id)
-                                                .CountAsync();
-
-            info.Summary = info.AnimalRowsRemoved > 0
-                ? "Animal removed from database."
-                : "No matching animal rows were deleted.";
-
-            return info;
-        }
-
-        // ---- FeedingEvent CRUD ----
-        public async Task<FeedingEvent?> GetEventAsync(int id) =>
-            await _db.FindAsync<FeedingEvent>(id);
+        public Task<FeedingEvent?> GetEventAsync(int id) =>
+            _db.FindAsync<FeedingEvent>(id);
 
         public Task<List<FeedingEvent>> GetEventsByAnimalAsync(int animalId) =>
             _db.Table<FeedingEvent>()
                .Where(e => e.AnimalId == animalId)
                .ToListAsync();
 
-        public Task<int> SaveEventAsync(FeedingEvent e)
-        {
-            if (e.Id == 0)
-                return _db.InsertAsync(e);
-            return _db.UpdateAsync(e);
-        }
+        public Task<int> SaveEventAsync(FeedingEvent e) =>
+            e.Id == 0
+                ? _db.InsertAsync(e)
+                : _db.UpdateAsync(e);
 
         public Task<int> DeleteEventAsync(FeedingEvent e) =>
             _db.DeleteAsync(e);
