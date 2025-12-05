@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Microsoft.Maui.ApplicationModel;
+using FeedingApp.Models;
 using CameraView = CommunityToolkit.Maui.Views.CameraView;
 
 namespace FeedingApp.Views
@@ -121,8 +122,37 @@ namespace FeedingApp.Views
 
         private void OnAddFeedingClicked(object sender, EventArgs e)
         {
+            _vm.StartNewFeeding();
+
             var popup = new FeedingPopup(_vm);
             this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
+        }
+
+        private void OnEditEventInvoked(object sender, EventArgs e)
+        {
+            if (sender is not SwipeItem swipeItem || swipeItem.BindingContext is not FeedingEvent feedingEvent)
+                return;
+
+            _vm.BeginEdit(feedingEvent);
+
+            var popup = new FeedingPopup(_vm);
+            this.ShowPopup(popup);
+        }
+
+        private async void OnDeleteEventInvoked(object sender, EventArgs e)
+        {
+            if (sender is not SwipeItem swipeItem || swipeItem.BindingContext is not FeedingEvent feedingEvent)
+                return;
+
+            try
+            {
+                if (_vm.DeleteEventCommand.CanExecute(feedingEvent))
+                    _vm.DeleteEventCommand.Execute(feedingEvent);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Hiba", $"Az etetés törlése nem sikerült: {ex.Message}", "OK");
+            }
         }
 
         private static async Task<bool> EnsureCameraPermissionAsync()
