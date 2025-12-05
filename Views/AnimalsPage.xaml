@@ -33,12 +33,10 @@
 
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AnimalsPage}},
-                                                      Path=BindingContext.EditAnimalCommand}"
+                                    Command="{Binding BindingContext.EditAnimalCommand, Source={x:Reference AnimalsPageView}}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AnimalsPage}},
-                                                      Path=BindingContext.DeleteAnimalCommand}"
+                                    Command="{Binding BindingContext.DeleteAnimalCommand, Source={x:Reference AnimalsPageView}}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
                     </Grid>
