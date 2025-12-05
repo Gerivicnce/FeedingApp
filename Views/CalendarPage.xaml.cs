@@ -8,12 +8,14 @@ using System;
 using System.IO;
 using System.Threading;
 using Microsoft.Maui.ApplicationModel;
+using CameraView = CommunityToolkit.Maui.Views.CameraView;
 
 namespace FeedingApp.Views
 {
     public partial class CalendarPage : ContentPage
     {
         private readonly CalendarViewModel _vm;
+        private readonly CameraView? _cameraView;
 
         public CalendarPage()
         {
@@ -23,8 +25,25 @@ namespace FeedingApp.Views
             _vm = new CalendarViewModel(db);
             BindingContext = _vm;
 
-            // kamera event feliratkozs
-            CameraViewControl.MediaCaptured += OnMediaCaptured;
+            // Kamera inicializlasa csak tmogatott platformokon
+#if ANDROID || IOS
+            _cameraView = new CameraView
+            {
+                HeightRequest = 220,
+                HorizontalOptions = LayoutOptions.Fill,
+            };
+
+            _cameraView.MediaCaptured += OnMediaCaptured;
+            CameraContainer.Content = _cameraView;
+#else
+            CameraContainer.Content = new Label
+            {
+                Text = "A kamera csak Android és iOS eszközökön érhető el.",
+                Padding = new Thickness(4, 8),
+                TextColor = Colors.Gray,
+                FontSize = 12,
+            };
+#endif
         }
 
         protected override async void OnAppearing()
@@ -51,13 +70,19 @@ namespace FeedingApp.Views
         {
             try
             {
+                if (_cameraView is null)
+                {
+                    await DisplayAlert("Nem elérhető", "A kamera csak Android és iOS eszközökön érhető el.", "OK");
+                    return;
+                }
+
                 if (!await EnsureCameraPermissionAsync())
                 {
                     await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges.", "OK");
                     return;
                 }
 
-                if (!CameraViewControl.IsAvailable)
+                if (!_cameraView.IsAvailable)
                 {
                     await DisplayAlert("Nem elérhető", "A kamera nem érhető el ezen az eszközön.", "OK");
                     return;
@@ -66,7 +91,7 @@ namespace FeedingApp.Views
                 using var cts = new CancellationTokenSource();
                 // Ez csak elindtja a fot ksztst,
                 // a stream az OnMediaCaptured-ben jn meg
-                await CameraViewControl.CaptureImage(cts.Token);
+                await _cameraView.CaptureImage(cts.Token);
             }
             catch (Exception ex)
             {
