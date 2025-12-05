@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FeedingApp.Models;
@@ -21,18 +22,19 @@ public partial class EditAnimalPage : ContentPage, IQueryAttributable
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         // Shell route paraméter: ?animalId=123
-        if (query.TryGetValue("animalId", out var idValue)
-            && int.TryParse(idValue?.ToString(), out var id)
-            && id != 0)
+        if (query.TryGetValue("animalId", out var idValue))
         {
-            _ = LoadExistingAnimalAsync(id);
+            var idString = Uri.UnescapeDataString(idValue?.ToString() ?? string.Empty);
+            if (int.TryParse(idString, out var id) && id != 0)
+            {
+                _ = LoadExistingAnimalAsync(id);
+                return;
+            }
         }
-        else
-        {
-            // új állat felvétele
-            _animal = new Animal();
-            BindingContext = _animal;
-        }
+
+        // új állat felvétele
+        _animal = new Animal();
+        BindingContext = _animal;
     }
 
     private async Task LoadExistingAnimalAsync(int id)
