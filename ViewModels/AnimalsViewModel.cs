@@ -70,8 +70,18 @@ namespace FeedingApp.ViewModels
             if (!confirm)
                 return;
 
-            await _db.DeleteAnimalAsync(animal);
-            Animals.Remove(animal);
+            var deletedRows = await _db.DeleteAnimalAsync(animal);
+
+            if (deletedRows == 0)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Sikertelen törlés",
+                    "A törlés nem sikerült, kérlek próbáld újra.",
+                    "Rendben");
+                return;
+            }
+
+            await LoadAsync();
             SelectedAnimal = null;
         }
 
