@@ -11,11 +11,11 @@ public partial class EditAnimalPage : ContentPage, IQueryAttributable
     private readonly DatabaseService _db;
     private Animal _animal = new();
 
-    public EditAnimalPage()
+    public EditAnimalPage(DatabaseService db)
     {
         InitializeComponent();
 
-        _db = new DatabaseService();
+        _db = db;
         BindingContext = _animal; // kezdetben egy üres Animal
     }
 

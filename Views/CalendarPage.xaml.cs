@@ -1,7 +1,6 @@
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
-using FeedingApp.Services;
 using FeedingApp.ViewModels;
 using Microsoft.Maui.Storage;
 using System;
@@ -18,12 +17,11 @@ namespace FeedingApp.Views
         private readonly CalendarViewModel _vm;
         private readonly CameraView? _cameraView;
 
-        public CalendarPage()
+        public CalendarPage(CalendarViewModel vm)
         {
             InitializeComponent();
 
-            var db = new DatabaseService();
-            _vm = new CalendarViewModel(db);
+            _vm = vm;
             BindingContext = _vm;
 
             // Kamera inicializlasa csak tmogatott platformokon
