@@ -11,10 +11,11 @@ namespace FeedingApp.Services
     public class DatabaseService
     {
         private readonly SQLiteAsyncConnection _db;
+        private readonly string _dbPath;
         public DatabaseService()
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
-            _db = new SQLiteAsyncConnection(dbPath);
+            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
+            _db = new SQLiteAsyncConnection(_dbPath);
             _db.CreateTableAsync<Animal>().Wait();
             _db.CreateTableAsync<FeedingEvent>().Wait();
         }
@@ -31,15 +32,48 @@ namespace FeedingApp.Services
             return _db.UpdateAsync(animal);
         }
 
-        public async Task DeleteAnimalAsync(Animal animal)
-        {
-            if (animal == null || animal.Id == 0)
-                return;
+        public async Task DeleteAnimalAsync(Animal animal) =>
+            await DeleteAnimalWithDebugAsync(animal);
 
-            await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
+        public async Task<DeleteDebugInfo> DeleteAnimalWithDebugAsync(Animal? animal)
+        {
+            var info = new DeleteDebugInfo
+            {
+                DatabasePath = _dbPath,
+                AnimalId = animal?.Id ?? 0
+            };
+
+            if (animal == null || animal.Id == 0)
+            {
+                info.Summary = "Animal was null or unsaved.";
+                return info;
+            }
+
+            info.AnimalsBefore = await _db.Table<Animal>().CountAsync();
+            info.FeedingEventsBefore = await _db.Table<FeedingEvent>().CountAsync();
+            info.ExistedBefore = await _db.Table<Animal>()
+                                          .Where(a => a.Id == animal.Id)
+                                          .CountAsync() > 0;
+            info.EventsForAnimalBefore = await _db.Table<FeedingEvent>()
+                                                 .Where(e => e.AnimalId == animal.Id)
+                                                 .CountAsync();
+
+            info.FeedingEventsRemoved = await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
             // Delete explicitly by primary key to avoid keeping stale rows around
             // when the caller provides a different instance of the same entity.
-            await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
+            info.AnimalRowsRemoved = await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
+
+            info.AnimalsAfter = await _db.Table<Animal>().CountAsync();
+            info.FeedingEventsAfter = await _db.Table<FeedingEvent>().CountAsync();
+            info.EventsForAnimalAfter = await _db.Table<FeedingEvent>()
+                                                .Where(e => e.AnimalId == animal.Id)
+                                                .CountAsync();
+
+            info.Summary = info.AnimalRowsRemoved > 0
+                ? "Animal removed from database."
+                : "No matching animal rows were deleted.";
+
+            return info;
         }
 
         // ---- FeedingEvent CRUD ----
