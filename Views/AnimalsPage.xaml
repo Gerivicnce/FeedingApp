@@ -5,7 +5,8 @@
              Title="Állatok"
              x:DataType="viewModels:AnimalsViewModel"
              xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
-             xmlns:models="clr-namespace:FeedingApp.Models">
+             xmlns:models="clr-namespace:FeedingApp.Models"
+             xmlns:views="clr-namespace:FeedingApp.Views">
 
     <StackLayout Padding="10" Spacing="10">
         <Button Text="Új állat"
@@ -32,12 +33,12 @@
 
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
-                                    Command="{Binding BindingContext.EditAnimalCommand,
-                                                      Source={x:Reference AnimalsPageView}}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AnimalsPage}},
+                                                      Path=BindingContext.EditAnimalCommand}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
-                                    Command="{Binding BindingContext.DeleteAnimalCommand,
-                                                      Source={x:Reference AnimalsPageView}}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:AnimalsPage}},
+                                                      Path=BindingContext.DeleteAnimalCommand}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
                     </Grid>

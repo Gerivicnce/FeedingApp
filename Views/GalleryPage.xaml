@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
              xmlns:models="clr-namespace:FeedingApp.Models"
+             xmlns:views="clr-namespace:FeedingApp.Views"
              x:Class="FeedingApp.Views.GalleryPage"
              Title="Galéria"
              x:DataType="viewModels:GalleryViewModel">
@@ -22,7 +23,7 @@
 
                     <Button Grid.Row="1"
                             Text="Megosztás"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type views:GalleryPage}},
                                               Path=BindingContext.ShareCommand}"
                             CommandParameter="{Binding PhotoPath}" />
                 </Grid>
