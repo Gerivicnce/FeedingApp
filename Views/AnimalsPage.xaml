@@ -39,6 +39,11 @@
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
                                     Command="{Binding Source={x:Reference AnimalsPageView},
+                                    Command="{Binding Source={x:Reference AnimalsCollection},
+                                                        Path=BindingContext.EditAnimalCommand}"
+                                    CommandParameter="{Binding}" />
+                            <Button Text="🗑"
+                                    Command="{Binding Source={x:Reference AnimalsCollection},
                                                         Path=BindingContext.DeleteAnimalCommand}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
