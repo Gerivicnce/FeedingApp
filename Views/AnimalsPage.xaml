@@ -32,19 +32,18 @@
                                    FontSize="10" />
                         </StackLayout>
 
-                        <StackLayout Grid.Column="1" Orientation="Horizontal">
-                            <Button Text="✏"
-                                    Command="{Binding Source={x:Reference AnimalsPageView},
-                                                        Path=BindingContext.EditAnimalCommand}"
-                                    CommandParameter="{Binding}" />
-                            <Button Text="🗑"
-                                    Command="{Binding Source={x:Reference AnimalsPageView},
-                                                        Path=BindingContext.DeleteAnimalCommand}"
-                                    CommandParameter="{Binding}" />
-                        </StackLayout>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
+        <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="End">
+            <Button Text="✏"
+                    Command="{Binding EditAnimalCommand}"
+                    CommandParameter="{Binding SelectedAnimal}" />
+            <Button Text="🗑"
+                    Command="{Binding DeleteAnimalCommand}"
+                    CommandParameter="{Binding SelectedAnimal}" />
+        </StackLayout>
     </StackLayout>
 </ContentPage>
