@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using CommunityToolkit.Maui.Views;
 using FeedingApp.ViewModels;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 
 namespace FeedingApp.Views;
@@ -31,32 +32,50 @@ public partial class FeedingPopup : Popup
 
         try
         {
-            if (!MediaPicker.Default.IsPickPhotoSupported && !MediaPicker.Default.IsCaptureSupported)
-            {
-                await Shell.Current.DisplayAlert("Nem elérhető", "Ez a platform nem támogatja a fotó kiválasztást.", "OK");
-                return;
-            }
-
             FileResult? result = null;
 
-            if (MediaPicker.Default.IsPickPhotoSupported)
+            try
             {
                 result = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions
                 {
                     Title = "Etetési fotó kiválasztása"
                 });
             }
+            catch (FeatureNotSupportedException)
+            {
+                // Picking photos is not supported on this device.
+            }
+            catch (PermissionException ex)
+            {
+                await Shell.Current.DisplayAlert("Hozzáférés megtagadva", $"A művelet engedélyt igényel: {ex.Message}", "OK");
+                return;
+            }
 
             if (result == null && MediaPicker.Default.IsCaptureSupported)
             {
-                result = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
+                try
                 {
-                    Title = "Etetési fotó"
-                });
+                    result = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
+                    {
+                        Title = "Etetési fotó"
+                    });
+                }
+                catch (PermissionException ex)
+                {
+                    await Shell.Current.DisplayAlert("Hozzáférés megtagadva", $"A művelet engedélyt igényel: {ex.Message}", "OK");
+                    return;
+                }
+                catch (FeatureNotSupportedException)
+                {
+                    // Capturing photos is not supported on this device.
+                }
             }
 
             if (result == null)
+            {
+                await Shell.Current.DisplayAlert("Nem elérhető", "Ez a platform nem támogatja a fotó kiválasztást.", "OK");
                 return;
+            }
 
             var newFile = Path.Combine(FileSystem.AppDataDirectory, $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg");
             await using var stream = await result.OpenReadAsync();
