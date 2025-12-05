@@ -13,6 +13,9 @@
         <ToolbarItem Text="Új"
                      Priority="0"
                      Command="{Binding AddAnimalCommand}" />
+        <ToolbarItem Text="Adatok törlése"
+                     Priority="1"
+                     Command="{Binding ResetDatabaseCommand}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Resources>

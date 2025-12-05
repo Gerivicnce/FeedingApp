@@ -1,17 +1,24 @@
 using FeedingApp.Models;
 using Microsoft.Maui.Storage;
 using SQLite;
+using System.IO;
 
 namespace FeedingApp.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly SQLiteAsyncConnection _db;
+        private readonly string _dbPath;
+        private SQLiteAsyncConnection _db = null!;
 
         public DatabaseService()
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
-            _db = new SQLiteAsyncConnection(dbPath);
+            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "feeding.db3");
+            InitializeDatabase();
+        }
+
+        private void InitializeDatabase()
+        {
+            _db = new SQLiteAsyncConnection(_dbPath);
             _db.CreateTableAsync<Animal>().Wait();
             _db.CreateTableAsync<FeedingEvent>().Wait();
         }
@@ -64,5 +71,15 @@ namespace FeedingApp.Services
 
         public Task<List<FeedingEvent>> GetAllEventsAsync() =>
             _db.Table<FeedingEvent>().ToListAsync();
+
+        public async Task ResetDatabaseAsync()
+        {
+            await _db.CloseAsync();
+
+            if (File.Exists(_dbPath))
+                File.Delete(_dbPath);
+
+            InitializeDatabase();
+        }
     }
 }

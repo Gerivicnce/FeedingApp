@@ -15,5 +15,6 @@ namespace FeedingApp.Services
         Task<int> SaveEventAsync(FeedingEvent feedingEvent);
         Task<int> DeleteEventAsync(FeedingEvent feedingEvent);
         Task<List<FeedingEvent>> GetAllEventsAsync();
+        Task ResetDatabaseAsync();
     }
 }
