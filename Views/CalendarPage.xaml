@@ -47,27 +47,48 @@
         <!-- Az adott nap etetései -->
         <CollectionView Grid.Row="4"
                         ItemsSource="{Binding Events}">
+            <CollectionView.EmptyView>
+                <Label Text="Nincs etetés ezen a napon."
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Padding="10"
+                       TextColor="Gray" />
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:FeedingEvent">
-                    <SwipeView>
-                        <SwipeView.RightItems>
-                            <SwipeItems Mode="Execute">
-                                <SwipeItem Text="Szerkesztés"
-                                           Invoked="OnEditEventInvoked"
-                                           CommandParameter="{Binding .}" />
-                                <SwipeItem Text="Törlés"
-                                           BackgroundColor="Tomato"
-                                           Invoked="OnDeleteEventInvoked"
-                                           CommandParameter="{Binding .}" />
-                            </SwipeItems>
-                        </SwipeView.RightItems>
+                    <Frame Margin="0,4"
+                           Padding="10"
+                           BorderColor="#dddddd"
+                           HasShadow="False">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding FeedingTime, StringFormat='{0:HH:mm}'}"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding WeightGrams, StringFormat='Súly: {0} g'}"
+                                   IsVisible="{Binding WeightGrams, Converter={StaticResource NullToBoolConverter}}"
+                                   FontSize="12" />
+                            <Label Text="{Binding Notes}"
+                                   IsVisible="{Binding Notes, Converter={StaticResource StringNotEmptyConverter}}"
+                                   FontSize="12" />
+                            <Label Text="📷 Fotó csatolva"
+                                   FontSize="12"
+                                   TextColor="SlateGray"
+                                   IsVisible="{Binding PhotoPath, Converter={StaticResource StringNotEmptyConverter}}" />
 
-                        <StackLayout Padding="5">
-                            <Label Text="{Binding FeedingTime, StringFormat='Etetés ideje: {0:yyyy.MM.dd HH:mm}'}" />
-                            <Label Text="{Binding WeightGrams, StringFormat='Tömeg: {0} g'}" />
-                            <Label Text="{Binding PhotoPath}" FontSize="10" />
-                        </StackLayout>
-                    </SwipeView>
+                            <HorizontalStackLayout Spacing="8" Margin="0,6,0,0">
+                                <Button Text="Szerkesztés"
+                                        Padding="10,4"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnEditEventClicked" />
+                                <Button Text="Törlés"
+                                        Padding="10,4"
+                                        BackgroundColor="Tomato"
+                                        TextColor="White"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnDeleteEventClicked" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

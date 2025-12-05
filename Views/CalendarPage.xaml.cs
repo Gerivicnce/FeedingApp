@@ -126,9 +126,9 @@ namespace FeedingApp.Views
             this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
         }
 
-        private void OnEditEventInvoked(object sender, EventArgs e)
+        private void OnEditEventClicked(object sender, EventArgs e)
         {
-            if (sender is not SwipeItem swipeItem || swipeItem.BindingContext is not FeedingEvent feedingEvent)
+            if (sender is not Button button || button.BindingContext is not FeedingEvent feedingEvent)
                 return;
 
             _vm.BeginEdit(feedingEvent);
@@ -137,15 +137,19 @@ namespace FeedingApp.Views
             this.ShowPopup(popup);
         }
 
-        private async void OnDeleteEventInvoked(object sender, EventArgs e)
+        private async void OnDeleteEventClicked(object sender, EventArgs e)
         {
-            if (sender is not SwipeItem swipeItem || swipeItem.BindingContext is not FeedingEvent feedingEvent)
+            if (sender is not Button button || button.BindingContext is not FeedingEvent feedingEvent)
                 return;
 
             try
             {
-                if (_vm.DeleteEventCommand.CanExecute(feedingEvent))
-                    _vm.DeleteEventCommand.Execute(feedingEvent);
+                var confirm = await DisplayAlert("Megerősítés", "Biztosan törlöd ezt az etetést?", "Igen", "Mégse");
+                if (!confirm)
+                    return;
+
+                if (_vm.DeleteFeedingCommand.CanExecute(feedingEvent))
+                    _vm.DeleteFeedingCommand.Execute(feedingEvent);
             }
             catch (Exception ex)
             {
