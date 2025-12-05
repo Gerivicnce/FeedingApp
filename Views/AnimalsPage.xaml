@@ -40,10 +40,10 @@
         <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="End">
             <Button Text="✏"
                     Command="{Binding EditAnimalCommand}"
-                    CommandParameter="{Binding SelectedAnimal}" />
+                    CommandParameter="{Binding SelectedItem, Source={x:Reference AnimalsCollection}}" />
             <Button Text="🗑"
                     Command="{Binding DeleteAnimalCommand}"
-                    CommandParameter="{Binding SelectedAnimal}" />
+                    CommandParameter="{Binding SelectedItem, Source={x:Reference AnimalsCollection}}" />
         </StackLayout>
     </StackLayout>
 </ContentPage>
