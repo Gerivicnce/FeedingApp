@@ -9,14 +9,14 @@ namespace FeedingApp.ViewModels
 {
     public class GalleryViewModel
     {
-        private readonly DatabaseService _db;
+        private readonly IDatabaseService _db;
 
         public ObservableCollection<FeedingEvent> Photos { get; } = new();
 
         public ICommand LoadPhotosCommand { get; }
         public ICommand ShareCommand { get; }
 
-        public GalleryViewModel(DatabaseService db)
+        public GalleryViewModel(IDatabaseService db)
         {
             _db = db;
             LoadPhotosCommand = new Command(async () => await LoadAsync());

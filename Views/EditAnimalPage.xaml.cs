@@ -8,10 +8,10 @@ namespace FeedingApp.Views;
 
 public partial class EditAnimalPage : ContentPage, IQueryAttributable
 {
-    private readonly DatabaseService _db;
+    private readonly IDatabaseService _db;
     private Animal _animal = new();
 
-    public EditAnimalPage(DatabaseService db)
+    public EditAnimalPage(IDatabaseService db)
     {
         InitializeComponent();
 

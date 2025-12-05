@@ -14,7 +14,7 @@ namespace FeedingApp.ViewModels
 {
     public class AnimalsViewModel : INotifyPropertyChanged
     {
-        private readonly DatabaseService _db;
+        private readonly IDatabaseService _db;
 
         public ObservableCollection<Animal> Animals { get; } = new();
         private Animal? _selectedAnimal;
@@ -31,7 +31,7 @@ namespace FeedingApp.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public AnimalsViewModel(DatabaseService db)
+        public AnimalsViewModel(IDatabaseService db)
         {
             _db = db;
             LoadCommand = new Command(async () => await LoadAsync());
