@@ -1,16 +1,14 @@
-﻿using FeedingApp.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FeedingApp.Models;
 using FeedingApp.Services;
 
 namespace FeedingApp.Views;
 
-[QueryProperty(nameof(AnimalId), "animalId")]
-public partial class EditAnimalPage : ContentPage
+public partial class EditAnimalPage : ContentPage, IQueryAttributable
 {
     private readonly DatabaseService _db;
     private Animal _animal = new();
-
-    // Shell route paraméter: ?animalId=123
-    public int AnimalId { get; set; }
 
     public EditAnimalPage()
     {
@@ -20,25 +18,30 @@ public partial class EditAnimalPage : ContentPage
         BindingContext = _animal; // kezdetben egy üres Animal
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        base.OnNavigatedTo(args);
-
-        if (AnimalId != 0)
+        // Shell route paraméter: ?animalId=123
+        if (query.TryGetValue("animalId", out var idValue)
+            && int.TryParse(idValue?.ToString(), out var id)
+            && id != 0)
         {
-            // meglévő állat szerkesztése
-            var existing = await _db.GetAnimalAsync(AnimalId);
-            if (existing != null)
-            {
-                _animal = existing;
-                BindingContext = _animal; // újra beállítjuk, hogy a mezők frissüljenek
-            }
+            _ = LoadExistingAnimalAsync(id);
         }
         else
         {
             // új állat felvétele
             _animal = new Animal();
             BindingContext = _animal;
+        }
+    }
+
+    private async Task LoadExistingAnimalAsync(int id)
+    {
+        var existing = await _db.GetAnimalAsync(id);
+        if (existing != null)
+        {
+            _animal = existing;
+            BindingContext = _animal; // újra beállítjuk, hogy a mezők frissüljenek
         }
     }
 
