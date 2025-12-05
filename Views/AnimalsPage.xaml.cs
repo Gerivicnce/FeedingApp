@@ -1,4 +1,3 @@
-using FeedingApp.Services;
 using FeedingApp.ViewModels;
 
 namespace FeedingApp.Views;
@@ -6,12 +5,11 @@ namespace FeedingApp.Views;
 public partial class AnimalsPage : ContentPage
 {
     private readonly AnimalsViewModel _vm;
-    public AnimalsPage()
-	{
+    public AnimalsPage(AnimalsViewModel vm)
+    {
         InitializeComponent();
 
-        var db = new DatabaseService();
-        _vm = new AnimalsViewModel(db);
+        _vm = vm;
         BindingContext = _vm;
     }
     protected override void OnAppearing()

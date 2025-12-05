@@ -1,4 +1,3 @@
-using FeedingApp.Services;
 using FeedingApp.ViewModels;
 
 namespace FeedingApp.Views;
@@ -7,12 +6,11 @@ public partial class GalleryPage : ContentPage
 {
     private readonly GalleryViewModel _vm;
 
-    public GalleryPage()
+    public GalleryPage(GalleryViewModel vm)
     {
         InitializeComponent();
 
-        var db = new DatabaseService();
-        _vm = new GalleryViewModel(db);
+        _vm = vm;
         BindingContext = _vm;
     }
 
