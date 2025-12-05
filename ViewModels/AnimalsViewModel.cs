@@ -5,6 +5,7 @@ using System.Windows.Input;
 using FeedingApp.Models;
 using FeedingApp.Services;
 using FeedingApp.Views;
+using Microsoft.Maui.Controls;
 
 namespace FeedingApp.ViewModels
 {
@@ -58,6 +59,15 @@ namespace FeedingApp.ViewModels
         private async Task DeleteAnimalAsync(Animal? animal)
         {
             if (animal == null)
+                return;
+
+            var confirm = await Shell.Current.DisplayAlert(
+                "Megerősítés",
+                $"Biztosan törlöd a(z) {animal.Name} állatot?",
+                "Igen",
+                "Mégse");
+
+            if (!confirm)
                 return;
 
             await _db.DeleteAnimalAsync(animal);

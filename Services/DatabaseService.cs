@@ -27,13 +27,13 @@ namespace FeedingApp.Services
                 ? _db.InsertAsync(animal)
                 : _db.UpdateAsync(animal);
 
-        public async Task DeleteAnimalAsync(Animal animal)
+        public async Task<int> DeleteAnimalAsync(Animal animal)
         {
             if (animal.Id == 0)
-                return;
+                return 0;
 
             await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
-            await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
+            return await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
         }
 
         public Task<FeedingEvent?> GetEventAsync(int id) =>
@@ -43,6 +43,16 @@ namespace FeedingApp.Services
             _db.Table<FeedingEvent>()
                .Where(e => e.AnimalId == animalId)
                .ToListAsync();
+
+        public Task<List<FeedingEvent>> GetEventsByAnimalAndDateAsync(int animalId, DateTime date)
+        {
+            var start = date.Date;
+            var end = start.AddDays(1);
+
+            return _db.Table<FeedingEvent>()
+                .Where(e => e.AnimalId == animalId && e.FeedingTime >= start && e.FeedingTime < end)
+                .ToListAsync();
+        }
 
         public Task<int> SaveEventAsync(FeedingEvent e) =>
             e.Id == 0

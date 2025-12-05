@@ -88,14 +88,28 @@ namespace FeedingApp.ViewModels
             }
         }
 
+        private FeedingEvent? _editingEvent;
+        public FeedingEvent? EditingEvent
+        {
+            get => _editingEvent;
+            private set
+            {
+                if (_editingEvent != value)
+                {
+                    _editingEvent = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ICommand LoadCommand { get; }
         public ICommand LoadEventsCommand { get; }
+        public ICommand NewFeedingCommand { get; }
+        public ICommand EditFeedingCommand { get; }
         public ICommand SaveFeedingCommand { get; }
-        public ICommand DeleteEventCommand { get; }
+        public ICommand DeleteFeedingCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        private FeedingEvent? _editingEvent;
 
         public CalendarViewModel(IDatabaseService db)
         {
@@ -103,8 +117,10 @@ namespace FeedingApp.ViewModels
 
             LoadCommand = new Command(async () => await LoadAsync());
             LoadEventsCommand = new Command(async () => await LoadEventsAsync());
+            NewFeedingCommand = new Command(StartNewFeeding);
+            EditFeedingCommand = new Command<FeedingEvent>(BeginEdit);
             SaveFeedingCommand = new Command(async () => await SaveFeedingAsync());
-            DeleteEventCommand = new Command<FeedingEvent>(async e => await DeleteEventAsync(e));
+            DeleteFeedingCommand = new Command<FeedingEvent>(async e => await DeleteEventAsync(e));
         }
 
         public async Task LoadAsync()
@@ -134,12 +150,11 @@ namespace FeedingApp.ViewModels
             if (SelectedAnimal == null)
                 return;
 
-            var events = await _db.GetEventsByAnimalAsync(SelectedAnimal.Id);
+            var events = await _db.GetEventsByAnimalAndDateAsync(SelectedAnimal.Id, SelectedDate);
 
             foreach (var e in events)
             {
-                if (e.FeedingTime.Date == SelectedDate.Date)
-                    Events.Add(e);
+                Events.Add(e);
             }
         }
 
@@ -149,14 +164,14 @@ namespace FeedingApp.ViewModels
 
             var feedingDate = SelectedDate.Date;
 
-            if (_editingEvent is not null)
+            if (EditingEvent is not null)
             {
-                _editingEvent.FeedingTime = feedingDate + _editingEvent.FeedingTime.TimeOfDay;
-                _editingEvent.WeightGrams = CurrentWeight;
-                _editingEvent.PhotoPath = CurrentPhotoPath;
-                _editingEvent.Notes = CurrentNotes;
+                EditingEvent.FeedingTime = feedingDate + EditingEvent.FeedingTime.TimeOfDay;
+                EditingEvent.WeightGrams = CurrentWeight;
+                EditingEvent.PhotoPath = CurrentPhotoPath;
+                EditingEvent.Notes = CurrentNotes;
 
-                await _db.SaveEventAsync(_editingEvent);
+                await _db.SaveEventAsync(EditingEvent);
             }
             else
             {
@@ -177,9 +192,12 @@ namespace FeedingApp.ViewModels
             ClearCurrentEntry();
         }
 
-        public void BeginEdit(FeedingEvent feedingEvent)
+        public void BeginEdit(FeedingEvent? feedingEvent)
         {
-            _editingEvent = feedingEvent;
+            if (feedingEvent == null)
+                return;
+
+            EditingEvent = feedingEvent;
             SelectedDate = feedingEvent.FeedingTime.Date;
 
             CurrentWeight = feedingEvent.WeightGrams;
@@ -199,13 +217,13 @@ namespace FeedingApp.ViewModels
             await _db.DeleteEventAsync(feedingEvent);
             await LoadEventsAsync();
 
-            if (_editingEvent?.Id == feedingEvent.Id)
+            if (EditingEvent?.Id == feedingEvent.Id)
                 ClearCurrentEntry();
         }
 
         private void ClearCurrentEntry()
         {
-            _editingEvent = null;
+            EditingEvent = null;
             CurrentWeight = null;
             CurrentPhotoPath = string.Empty;
             CurrentNotes = string.Empty;

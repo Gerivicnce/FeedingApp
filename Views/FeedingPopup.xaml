@@ -11,8 +11,18 @@
                Keyboard="Numeric"
                Text="{Binding CurrentWeight}" />
 
-        <Entry Placeholder="Megjegyzés (opcionális)"
-               Text="{Binding CurrentNotes}" />
+        <Editor Placeholder="Megjegyzés (opcionális)"
+                AutoSize="TextChanges"
+                Text="{Binding CurrentNotes}" />
+
+        <Button Text="Fotó kiválasztása"
+                Clicked="OnPickPhotoClicked" />
+
+        <Label Text="{Binding CurrentPhotoPath}"
+               FontSize="12"
+               TextColor="Gray"
+               LineBreakMode="TailTruncation"
+               IsVisible="{Binding CurrentPhotoPath, Converter={StaticResource StringNotEmptyConverter}}" />
 
         <Button Text="Mentés" Clicked="OnSaveClicked" />
     </VerticalStackLayout>

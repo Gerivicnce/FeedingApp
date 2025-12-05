@@ -8,54 +8,63 @@
              xmlns:models="clr-namespace:FeedingApp.Models"
              xmlns:views="clr-namespace:FeedingApp.Views">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Új"
+                     Priority="0"
+                     Command="{Binding AddAnimalCommand}" />
+    </ContentPage.ToolbarItems>
+
     <Grid Padding="10" RowSpacing="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <Button Grid.Row="0"
-                Text="Új állat"
-                Command="{Binding AddAnimalCommand}" />
-
-        <CollectionView Grid.Row="1"
-                        x:Name="AnimalsCollection"
+        <CollectionView x:Name="AnimalsCollection"
                         ItemsSource="{Binding Animals}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedAnimal}">
+            <CollectionView.EmptyView>
+                <Label Text="Még nincs felvett állat. Kattints az Új gombra!"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TextColor="Gray"
+                       Padding="20" />
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Animal">
-                    <Grid Padding="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Frame Padding="10"
+                           Margin="0,4"
+                           BorderColor="#dddddd"
+                           HasShadow="False">
+                        <Grid ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <StackLayout>
-                            <Label Text="{Binding Name}" FontAttributes="Bold" />
-                            <Label Text="{Binding Species}" FontSize="12" />
-                            <Label Text="{Binding FeedingIntervalDays,
-                                                  StringFormat='Etetés: {0} naponta'}"
-                                   FontSize="10" />
-                        </StackLayout>
+                            <StackLayout>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Species}" FontSize="12" />
+                                <Label Text="{Binding FeedingIntervalDays,
+                                                      StringFormat='Etetés: {0} naponta'}"
+                                       FontSize="10" />
+                            </StackLayout>
 
-                    </Grid>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End">
+                                <Button Text="Szerkesztés"
+                                        FontSize="12"
+                                        Padding="8,4"
+                                        Command="{Binding BindingContext.EditAnimalCommand, Source={x:Reference AnimalsPageView}}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Text="Törlés"
+                                        FontSize="12"
+                                        Padding="8,4"
+                                        BackgroundColor="Tomato"
+                                        TextColor="White"
+                                        Command="{Binding BindingContext.DeleteAnimalCommand, Source={x:Reference AnimalsPageView}}"
+                                        CommandParameter="{Binding .}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <StackLayout Grid.Row="2"
-                     Orientation="Horizontal"
-                     Spacing="10"
-                     HorizontalOptions="End">
-            <Button Text="✏"
-                    Command="{Binding EditAnimalCommand}"
-                    CommandParameter="{Binding SelectedAnimal}" />
-            <Button Text="🗑"
-                    Command="{Binding DeleteAnimalCommand}"
-                    CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=AnimalsCollection}}" />
-                    
-        </StackLayout>
     </Grid>
 </ContentPage>
