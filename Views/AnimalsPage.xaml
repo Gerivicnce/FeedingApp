@@ -4,7 +4,8 @@
              x:Class="FeedingApp.Views.AnimalsPage"
              Title="Állatok"
              x:DataType="viewModels:AnimalsViewModel"
-             xmlns:viewModels="clr-namespace:FeedingApp.ViewModels">
+             xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
+             xmlns:models="clr-namespace:FeedingApp.Models">
 
     <StackLayout Padding="10" Spacing="10">
         <Button Text="Új állat"
@@ -14,7 +15,7 @@
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedAnimal}">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:Animal">
                     <Grid Padding="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

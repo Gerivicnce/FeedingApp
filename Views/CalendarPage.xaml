@@ -2,8 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
+             xmlns:models="clr-namespace:FeedingApp.Models"
              x:Class="FeedingApp.Views.CalendarPage"
-             Title="Naptár">
+             Title="Naptár"
+             x:DataType="viewModels:CalendarViewModel">
 
     <Grid Padding="10" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
 
@@ -38,7 +41,7 @@
         <CollectionView Grid.Row="4"
                         ItemsSource="{Binding Events}">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:FeedingEvent">
                     <StackLayout Padding="5">
                         <Label Text="{Binding FeedingTime, StringFormat='Etetés ideje: {0:yyyy.MM.dd HH:mm}'}" />
                         <Label Text="{Binding WeightGrams, StringFormat='Tömeg: {0} g'}" />
