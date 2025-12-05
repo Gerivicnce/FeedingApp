@@ -40,9 +40,13 @@
                     Clicked="OnAddFeedingClicked" />
         </HorizontalStackLayout>
 
-        <!-- Kamera előnézet / helyettesítő üzenet -->
-        <ContentView x:Name="CameraContainer"
-                     Grid.Row="3" />
+        <!-- Tájékoztatás a fotó mentéséről -->
+        <ContentView Grid.Row="3">
+            <Label Text="Az itt készített fotó a telefon galériájába kerül, így az \"Új etetés\" ablakban is kiválaszthatod."
+                   Padding="4,8"
+                   TextColor="Gray"
+                   FontSize="12" />
+        </ContentView>
 
         <!-- Az adott nap etetései -->
         <CollectionView Grid.Row="4"
