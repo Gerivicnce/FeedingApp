@@ -20,9 +20,9 @@ public partial class EditAnimalPage : ContentPage
         BindingContext = _animal; // kezdetben egy üres Animal
     }
 
-    protected override async void OnAppearing()
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
 
         if (AnimalId != 0)
         {
