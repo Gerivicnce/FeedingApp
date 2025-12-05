@@ -53,8 +53,7 @@
                     Command="{Binding EditAnimalCommand}"
                     CommandParameter="{Binding SelectedAnimal}" />
             <Button Text="🗑"
-                    Command="{Binding DeleteAnimalCommand}"
-                    CommandParameter="{Binding SelectedAnimal}" />
+                    Command="{Binding DeleteAnimalCommand}" />
         </StackLayout>
     </Grid>
 </ContentPage>

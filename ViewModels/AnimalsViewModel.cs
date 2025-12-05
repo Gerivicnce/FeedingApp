@@ -37,7 +37,7 @@ namespace FeedingApp.ViewModels
             LoadCommand = new Command(async () => await LoadAsync());
             AddAnimalCommand = new Command(async () => await AddAnimalAsync());
             EditAnimalCommand = new Command<Animal>(async a => await EditAnimalAsync(a));
-            DeleteAnimalCommand = new Command<Animal>(async a => await DeleteAnimalAsync(a));
+            DeleteAnimalCommand = new Command(async () => await DeleteAnimalAsync());
         }
 
         private async Task LoadAsync()
@@ -61,11 +61,15 @@ namespace FeedingApp.ViewModels
             await Shell.Current.GoToAsync(route);
         }
 
-        private async Task DeleteAnimalAsync(Animal? animal)
+        private async Task DeleteAnimalAsync()
         {
-            if (animal == null) return;
+            if (SelectedAnimal == null) return;
+
+            var animal = SelectedAnimal;
+
             await _db.DeleteAnimalAsync(animal);
-            await LoadAsync();
+            Animals.Remove(animal);
+            SelectedAnimal = null;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
