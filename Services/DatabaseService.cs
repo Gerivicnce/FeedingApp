@@ -31,8 +31,14 @@ namespace FeedingApp.Services
             return _db.UpdateAsync(animal);
         }
 
-        public Task<int> DeleteAnimalAsync(Animal animal) =>
-            _db.DeleteAsync(animal);
+        public async Task DeleteAnimalAsync(Animal animal)
+        {
+            if (animal == null || animal.Id == 0)
+                return;
+
+            await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
+            await _db.DeleteAsync<Animal>(animal.Id);
+        }
 
         // ---- FeedingEvent CRUD ----
         public async Task<FeedingEvent?> GetEventAsync(int id) =>
