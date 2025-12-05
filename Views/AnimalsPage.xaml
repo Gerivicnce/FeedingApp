@@ -6,7 +6,8 @@
              x:DataType="viewModels:AnimalsViewModel"
              xmlns:viewModels="clr-namespace:FeedingApp.ViewModels"
              xmlns:models="clr-namespace:FeedingApp.Models"
-             xmlns:views="clr-namespace:FeedingApp.Views">
+             xmlns:views="clr-namespace:FeedingApp.Views"
+             BackgroundColor="#f4f6fb">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Új"
@@ -14,57 +15,154 @@
                      Command="{Binding AddAnimalCommand}" />
     </ContentPage.ToolbarItems>
 
-    <Grid Padding="10" RowSpacing="10">
-        <CollectionView x:Name="AnimalsCollection"
-                        ItemsSource="{Binding Animals}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedAnimal}">
-            <CollectionView.EmptyView>
-                <Label Text="Még nincs felvett állat. Kattints az Új gombra!"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       TextColor="Gray"
-                       Padding="20" />
-            </CollectionView.EmptyView>
+    <ContentPage.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="BackgroundColor" Value="#eef2ff" />
+            <Setter Property="TextColor" Value="#1a2a4f" />
+        </Style>
+        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+            <Setter Property="BackgroundColor" Value="#ffebe8" />
+            <Setter Property="TextColor" Value="#c1121f" />
+        </Style>
+    </ContentPage.Resources>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Animal">
-                    <Frame Padding="10"
-                           Margin="0,4"
-                           BorderColor="#dddddd"
-                           HasShadow="False">
-                        <Grid ColumnSpacing="10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackLayout>
-                                <Label Text="{Binding Name}" FontAttributes="Bold" />
-                                <Label Text="{Binding Species}" FontSize="12" />
-                                <Label Text="{Binding FeedingIntervalDays,
-                                                      StringFormat='Etetés: {0} naponta'}"
-                                       FontSize="10" />
-                            </StackLayout>
-
-                            <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End">
-                                <Button Text="Szerkesztés"
-                                        FontSize="12"
-                                        Padding="8,4"
-                                        Command="{Binding BindingContext.EditAnimalCommand, Source={x:Reference AnimalsPageView}}"
-                                        CommandParameter="{Binding .}" />
-                                <Button Text="Törlés"
-                                        FontSize="12"
-                                        Padding="8,4"
-                                        BackgroundColor="Tomato"
-                                        TextColor="White"
-                                        Command="{Binding BindingContext.DeleteAnimalCommand, Source={x:Reference AnimalsPageView}}"
-                                        CommandParameter="{Binding .}" />
-                            </VerticalStackLayout>
-                        </Grid>
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Frame CornerRadius="16"
+                   Padding="18"
+                   HasShadow="True"
+                   BackgroundColor="#1a2a4f"
+                   BorderColor="#10182e">
+                <Grid ColumnSpacing="14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Frame WidthRequest="52"
+                           HeightRequest="52"
+                           CornerRadius="14"
+                           BackgroundColor="#eef2ff"
+                           VerticalOptions="Center">
+                        <Label Text="🐾"
+                               FontSize="26"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
                     </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </Grid>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                        <Label Text="Állatlista"
+                               FontAttributes="Bold"
+                               FontSize="20"
+                               TextColor="White" />
+                        <Label Text="Tartsd kézben a gondozott állatokat, szerkeszd vagy töröld őket egyetlen koppintással."
+                               TextColor="#cfd6e6"
+                               FontSize="13" />
+                        <HorizontalStackLayout Spacing="8" Margin="0,6,0,0">
+                            <Label Text="{Binding Animals.Count, StringFormat='{0} állat'}"
+                                   TextColor="#b5c1d9"
+                                   FontSize="12" />
+                            <BoxView WidthRequest="2"
+                                     HeightRequest="12"
+                                     Color="#32405f" />
+                            <Label Text="Új állat hozzáadása a jobb felső gombbal"
+                                   FontSize="12"
+                                   TextColor="#b5c1d9" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <CollectionView x:Name="AnimalsCollection"
+                            ItemsSource="{Binding Animals}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedAnimal}"
+                            ItemsLayout="VerticalGrid, 2"
+                            VerticalOptions="FillAndExpand">
+                <CollectionView.EmptyView>
+                    <Frame Padding="26"
+                           CornerRadius="14"
+                           BackgroundColor="White"
+                           BorderColor="#e5e7eb">
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label Text="Még nincs felvett állat."
+                                   FontAttributes="Bold"
+                                   TextColor="#1a2a4f" />
+                            <Label Text="Koppints az Új gombra és add hozzá az első gondozottat!"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="Gray"
+                                   FontSize="13" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Animal">
+                        <Border Stroke="#e5e7eb"
+                                StrokeShape="RoundRectangle 20"
+                                Padding="14"
+                                BackgroundColor="White"
+                                Shadow="2,2,10,0,0.08">
+                            <Grid RowDefinitions="Auto,Auto,Auto"
+                                  ColumnDefinitions="*"
+                                  RowSpacing="10">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"
+                                           FontSize="18"
+                                           TextColor="#111827" />
+                                    <Label Text="{Binding Species}"
+                                           FontSize="13"
+                                           TextColor="#4b5563" />
+                                </VerticalStackLayout>
+
+                                <Grid Grid.Row="1"
+                                      ColumnDefinitions="Auto,*"
+                                      ColumnSpacing="8"
+                                      VerticalOptions="Center">
+                                    <Frame WidthRequest="32"
+                                           HeightRequest="32"
+                                           Padding="0"
+                                           CornerRadius="10"
+                                           BackgroundColor="#eef2ff"
+                                           BorderColor="#dfe6ff"
+                                           VerticalOptions="Center">
+                                        <Label Text="⏳"
+                                               FontSize="18"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                    </Frame>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding FeedingIntervalDays, StringFormat='{0} naponta etetve'}"
+                                               FontSize="13"
+                                               TextColor="#1f2937" />
+                                        <Label Text="{Binding Notes}"
+                                               FontSize="12"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="3"
+                                               TextColor="#6b7280" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Grid Grid.Row="2"
+                                      ColumnSpacing="8"
+                                      ColumnDefinitions="*,*">
+                                    <Button Text="Szerkesztés"
+                                            Style="{StaticResource ActionButtonStyle}"
+                                            Command="{Binding BindingContext.EditAnimalCommand, Source={x:Reference AnimalsPageView}}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="1"
+                                            Text="Törlés"
+                                            Style="{StaticResource DangerButtonStyle}"
+                                            Command="{Binding BindingContext.DeleteAnimalCommand, Source={x:Reference AnimalsPageView}}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
