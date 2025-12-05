@@ -74,6 +74,19 @@
                 </Grid>
             </Frame>
 
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Szerkesztés"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Command="{Binding EditAnimalCommand}"
+                        CommandParameter="{Binding SelectedAnimal}"
+                        IsEnabled="{Binding SelectedAnimal, Converter={StaticResource NullToBoolConverter}}" />
+                <Button Text="Törlés"
+                        Style="{StaticResource DangerButtonStyle}"
+                        Command="{Binding DeleteAnimalCommand}"
+                        CommandParameter="{Binding SelectedAnimal}"
+                        IsEnabled="{Binding SelectedAnimal, Converter={StaticResource NullToBoolConverter}}" />
+            </HorizontalStackLayout>
+
             <CollectionView x:Name="AnimalsCollection"
                             ItemsSource="{Binding Animals}"
                             SelectionMode="Single"
@@ -104,7 +117,7 @@
                                 Padding="14"
                                 BackgroundColor="White"
                                 Shadow="2,2,10,0,0.08">
-                            <Grid RowDefinitions="Auto,Auto,Auto"
+                            <Grid RowDefinitions="Auto,Auto"
                                   ColumnDefinitions="*"
                                   RowSpacing="10">
                                 <VerticalStackLayout Spacing="4">
@@ -143,20 +156,6 @@
                                                MaxLines="3"
                                                TextColor="#6b7280" />
                                     </VerticalStackLayout>
-                                </Grid>
-
-                                <Grid Grid.Row="2"
-                                      ColumnSpacing="8"
-                                      ColumnDefinitions="*,*">
-                                    <Button Text="Szerkesztés"
-                                            Style="{StaticResource ActionButtonStyle}"
-                                            Command="{Binding BindingContext.EditAnimalCommand, Source={x:Reference AnimalsPageView}}"
-                                            CommandParameter="{Binding .}" />
-                                    <Button Grid.Column="1"
-                                            Text="Törlés"
-                                            Style="{StaticResource DangerButtonStyle}"
-                                            Command="{Binding BindingContext.DeleteAnimalCommand, Source={x:Reference AnimalsPageView}}"
-                                            CommandParameter="{Binding .}" />
                                 </Grid>
                             </Grid>
                         </Border>
