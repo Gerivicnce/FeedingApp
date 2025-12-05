@@ -1,4 +1,4 @@
-using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 using FeedingApp.ViewModels;
 using System;
 using Microsoft.Maui.ApplicationModel;
@@ -70,15 +70,15 @@ namespace FeedingApp.Views
             }
         }
 
-        private void OnAddFeedingClicked(object sender, EventArgs e)
+        private async void OnAddFeedingClicked(object sender, EventArgs e)
         {
             _vm.StartNewFeeding();
 
             var popup = new FeedingPopup(_vm);
-            this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
+            await this.ShowPopupAsync(popup);
         }
 
-        private void OnEditEventClicked(object sender, EventArgs e)
+        private async void OnEditEventClicked(object sender, EventArgs e)
         {
             if (sender is not Button button || button.BindingContext is not FeedingEvent feedingEvent)
                 return;
@@ -86,7 +86,7 @@ namespace FeedingApp.Views
             _vm.BeginEdit(feedingEvent);
 
             var popup = new FeedingPopup(_vm);
-            this.ShowPopup(popup);
+            await this.ShowPopupAsync(popup);
         }
 
         private async void OnDeleteEventClicked(object sender, EventArgs e)

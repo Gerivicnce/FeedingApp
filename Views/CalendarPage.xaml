@@ -42,7 +42,7 @@
 
         <!-- Tájékoztatás a fotó mentéséről -->
         <ContentView Grid.Row="3">
-            <Label Text="Az itt készített fotó a telefon galériájába kerül, így az \"Új etetés\" ablakban is kiválaszthatod."
+            <Label Text="Az itt készített fotó a telefon galériájába kerül, így az &quot;Új etetés&quot; ablakban is kiválaszthatod."
                    Padding="4,8"
                    TextColor="Gray"
                    FontSize="12" />
@@ -61,10 +61,11 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:FeedingEvent">
-                    <Frame Margin="0,4"
-                           Padding="10"
-                           BorderColor="#dddddd"
-                           HasShadow="False">
+                    <Border Margin="0,4"
+                            Padding="10"
+                            Stroke="#dddddd"
+                            StrokeThickness="1"
+                            StrokeShape="Rectangle">
                         <VerticalStackLayout Spacing="4">
                             <Label Text="{Binding FeedingTime, StringFormat='{0:HH:mm}'}"
                                    FontAttributes="Bold" />
@@ -92,7 +93,7 @@
                                         Clicked="OnDeleteEventClicked" />
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
