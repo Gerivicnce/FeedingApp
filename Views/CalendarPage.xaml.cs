@@ -7,6 +7,7 @@ using Microsoft.Maui.Storage;
 using System;
 using System.IO;
 using System.Threading;
+using Microsoft.Maui.ApplicationModel;
 
 namespace FeedingApp.Views
 {
@@ -50,6 +51,18 @@ namespace FeedingApp.Views
         {
             try
             {
+                if (!await EnsureCameraPermissionAsync())
+                {
+                    await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges.", "OK");
+                    return;
+                }
+
+                if (!CameraViewControl.IsAvailable)
+                {
+                    await DisplayAlert("Nem elérhető", "A kamera nem érhető el ezen az eszközön.", "OK");
+                    return;
+                }
+
                 using var cts = new CancellationTokenSource();
                 // Ez csak elindtja a fot ksztst,
                 // a stream az OnMediaCaptured-ben jn meg
@@ -85,6 +98,19 @@ namespace FeedingApp.Views
         {
             var popup = new FeedingPopup(_vm);
             this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
+        }
+
+        private static async Task<bool> EnsureCameraPermissionAsync()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+            if (status == PermissionStatus.Granted)
+            {
+                return true;
+            }
+
+            status = await Permissions.RequestAsync<Permissions.Camera>();
+            return status == PermissionStatus.Granted;
         }
     }
 }
