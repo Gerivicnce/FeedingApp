@@ -9,25 +9,35 @@
              Title="Galéria"
              x:DataType="viewModels:GalleryViewModel">
 
-    <CollectionView ItemsSource="{Binding Photos}">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="models:FeedingEvent">
-                <Grid Padding="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="200" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+    <VerticalStackLayout Padding="10" Spacing="12">
+        <Button Text="Megosztás"
+                Command="{Binding ShareCommand}"
+                CommandParameter="{Binding SelectedPhoto.PhotoPath}"
+                IsEnabled="{Binding SelectedPhoto, Converter={StaticResource NullToBoolConverter}}" />
 
-                    <Image Grid.Row="0"
-                           Aspect="AspectFill"
-                           Source="{Binding PhotoPath}" />
+        <CollectionView ItemsSource="{Binding Photos}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedPhoto}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:FeedingEvent">
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="200" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <Button Grid.Row="1"
-                            Text="Megosztás"
-                            Command="{Binding BindingContext.ShareCommand, Source={x:Reference GalleryPageView}}"
-                            CommandParameter="{Binding PhotoPath}" />
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                        <Image Grid.Row="0"
+                               Aspect="AspectFill"
+                               Source="{Binding PhotoPath}" />
+
+                        <Label Grid.Row="1"
+                               Text="Koppints a megosztáshoz"
+                               FontAttributes="Italic"
+                               HorizontalOptions="Center"
+                               TextColor="Gray" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentPage>
