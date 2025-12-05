@@ -34,26 +34,25 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Frame CornerRadius="16"
-                   Padding="18"
-                   HasShadow="True"
-                   BackgroundColor="#1a2a4f"
-                   BorderColor="#10182e">
+            <Border Padding="18"
+                    Stroke="#10182e"
+                    StrokeShape="RoundRectangle 16"
+                    Background="{AppThemeBinding Light=#1a2a4f, Dark=#1a2a4f}">
                 <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Frame WidthRequest="52"
-                           HeightRequest="52"
-                           CornerRadius="14"
-                           BackgroundColor="#eef2ff"
-                           VerticalOptions="Center">
+                    <Border WidthRequest="52"
+                            HeightRequest="52"
+                            StrokeShape="RoundRectangle 14"
+                            Background="#eef2ff"
+                            VerticalOptions="Center">
                         <Label Text="🐾"
                                FontSize="26"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
-                    </Frame>
+                    </Border>
                     <VerticalStackLayout Grid.Column="1" Spacing="4">
                         <Label Text="Állatlista"
                                FontAttributes="Bold"
@@ -75,7 +74,7 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </Grid>
-            </Frame>
+            </Border>
 
             <HorizontalStackLayout Spacing="10">
                 <Button Text="Szerkesztés"
@@ -95,12 +94,12 @@
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedAnimal}"
                             ItemsLayout="VerticalGrid, 2"
-                            VerticalOptions="FillAndExpand">
+                            VerticalOptions="Fill">
                 <CollectionView.EmptyView>
-                    <Frame Padding="26"
-                           CornerRadius="14"
-                           BackgroundColor="White"
-                           BorderColor="#e5e7eb">
+                    <Border Padding="26"
+                            Stroke="#e5e7eb"
+                            StrokeShape="RoundRectangle 14"
+                            Background="White">
                         <VerticalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
                             <Label Text="Még nincs felvett állat."
                                    FontAttributes="Bold"
@@ -110,7 +109,7 @@
                                    TextColor="Gray"
                                    FontSize="13" />
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
@@ -137,18 +136,18 @@
                                       ColumnDefinitions="Auto,*"
                                       ColumnSpacing="8"
                                       VerticalOptions="Center">
-                                    <Frame WidthRequest="32"
-                                           HeightRequest="32"
-                                           Padding="0"
-                                           CornerRadius="10"
-                                           BackgroundColor="#eef2ff"
-                                           BorderColor="#dfe6ff"
-                                           VerticalOptions="Center">
+                                    <Border WidthRequest="32"
+                                            HeightRequest="32"
+                                            Padding="0"
+                                            Stroke="#dfe6ff"
+                                            StrokeShape="RoundRectangle 10"
+                                            Background="#eef2ff"
+                                            VerticalOptions="Center">
                                         <Label Text="⏳"
                                                FontSize="18"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center" />
-                                    </Frame>
+                                    </Border>
                                     <VerticalStackLayout Grid.Column="1" Spacing="2">
                                         <Label Text="{Binding FeedingIntervalDays, StringFormat='{0} naponta etetve'}"
                                                FontSize="13"
