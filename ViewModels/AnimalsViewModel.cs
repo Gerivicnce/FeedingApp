@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using FeedingApp.Models;
 using FeedingApp.Services;
+using FeedingApp.Views;
 
 namespace FeedingApp.ViewModels
 {
@@ -17,6 +13,7 @@ namespace FeedingApp.ViewModels
         private readonly IDatabaseService _db;
 
         public ObservableCollection<Animal> Animals { get; } = new();
+
         private Animal? _selectedAnimal;
         public Animal? SelectedAnimal
         {
@@ -48,17 +45,14 @@ namespace FeedingApp.ViewModels
                 Animals.Add(a);
         }
 
-        private async Task AddAnimalAsync()
-        {
-            // Pl. egy külön Edit/Detail page navigáció, ShellNavigation mintára a példából
-            await Shell.Current.GoToAsync("EditAnimalPage");
-        }
+        private static Task AddAnimalAsync() =>
+            Shell.Current.GoToAsync(nameof(Views.EditAnimalPage));
 
-        private async Task EditAnimalAsync(Animal? animal)
+        private static Task EditAnimalAsync(Animal? animal)
         {
-            if (animal == null) return;
-            var route = $"EditAnimalPage?animalId={animal.Id}";
-            await Shell.Current.GoToAsync(route);
+            if (animal == null) return Task.CompletedTask;
+            var route = $"{nameof(Views.EditAnimalPage)}?animalId={animal.Id}";
+            return Shell.Current.GoToAsync(route);
         }
 
         private async Task DeleteAnimalAsync(Animal? animal)
@@ -66,22 +60,9 @@ namespace FeedingApp.ViewModels
             if (animal == null)
                 return;
 
-            var debugInfo = await _db.DeleteAnimalWithDebugAsync(animal);
+            await _db.DeleteAnimalAsync(animal);
             Animals.Remove(animal);
             SelectedAnimal = null;
-
-            var summary = new StringBuilder();
-            summary.AppendLine(debugInfo.Summary ?? "Deletion attempted.");
-            summary.AppendLine($"Database: {debugInfo.DatabasePath}");
-            summary.AppendLine($"Animal Id: {debugInfo.AnimalId}");
-            summary.AppendLine($"Existed before delete: {debugInfo.ExistedBefore}");
-            summary.AppendLine($"Animals before/after: {debugInfo.AnimalsBefore} -> {debugInfo.AnimalsAfter}");
-            summary.AppendLine($"Events for animal before/after: {debugInfo.EventsForAnimalBefore} -> {debugInfo.EventsForAnimalAfter}");
-            summary.AppendLine($"Total events before/after: {debugInfo.FeedingEventsBefore} -> {debugInfo.FeedingEventsAfter}");
-            summary.AppendLine($"Events removed: {debugInfo.FeedingEventsRemoved}");
-            summary.AppendLine($"Animal rows removed: {debugInfo.AnimalRowsRemoved}");
-
-            await Shell.Current.DisplayAlert("Delete debug", summary.ToString(), "OK");
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>

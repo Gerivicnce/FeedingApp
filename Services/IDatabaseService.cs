@@ -8,7 +8,6 @@ namespace FeedingApp.Services
         Task<Animal?> GetAnimalAsync(int id);
         Task<int> SaveAnimalAsync(Animal animal);
         Task DeleteAnimalAsync(Animal animal);
-        Task<DeleteDebugInfo> DeleteAnimalWithDebugAsync(Animal? animal);
 
         Task<FeedingEvent?> GetEventAsync(int id);
         Task<List<FeedingEvent>> GetEventsByAnimalAsync(int animalId);
