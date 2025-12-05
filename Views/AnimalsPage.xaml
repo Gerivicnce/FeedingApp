@@ -55,6 +55,7 @@
             <Button Text="🗑"
                     Command="{Binding DeleteAnimalCommand}"
                     CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=AnimalsCollection}}" />
+                    CommandParameter="{Binding Source={x:Reference AnimalsCollection}, Path=SelectedItem}" />
         </StackLayout>
     </Grid>
 </ContentPage>
