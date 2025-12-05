@@ -12,7 +12,8 @@
         <Button Text="Új állat"
                 Command="{Binding AddAnimalCommand}" />
 
-        <CollectionView ItemsSource="{Binding Animals}"
+        <CollectionView x:Name="AnimalsCollection"
+                        ItemsSource="{Binding Animals}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedAnimal}">
             <CollectionView.ItemTemplate>
@@ -33,12 +34,12 @@
 
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
-                                    Command="{Binding Path=BindingContext.EditAnimalCommand,
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    Command="{Binding Source={x:Reference AnimalsPageView},
+                                                        Path=BindingContext.EditAnimalCommand}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
-                                    Command="{Binding Path=BindingContext.DeleteAnimalCommand,
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    Command="{Binding Source={x:Reference AnimalsPageView},
+                                                        Path=BindingContext.DeleteAnimalCommand}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
                     </Grid>
