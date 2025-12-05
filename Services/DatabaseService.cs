@@ -37,9 +37,9 @@ namespace FeedingApp.Services
                 return;
 
             await _db.Table<FeedingEvent>().DeleteAsync(e => e.AnimalId == animal.Id);
-            // Delete by entity instance to ensure the primary key is respected even
-            // if SQLite-net changes the overload resolution.
-            await _db.DeleteAsync(animal);
+            // Delete explicitly by primary key to avoid keeping stale rows around
+            // when the caller provides a different instance of the same entity.
+            await _db.Table<Animal>().DeleteAsync(a => a.Id == animal.Id);
         }
 
         // ---- FeedingEvent CRUD ----
