@@ -26,6 +26,7 @@ namespace FeedingApp.ViewModels
         public ICommand AddAnimalCommand { get; }
         public ICommand EditAnimalCommand { get; }
         public ICommand DeleteAnimalCommand { get; }
+        public ICommand ResetDatabaseCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -36,6 +37,7 @@ namespace FeedingApp.ViewModels
             AddAnimalCommand = new Command(async () => await AddAnimalAsync());
             EditAnimalCommand = new Command<Animal>(async a => await EditAnimalAsync(a));
             DeleteAnimalCommand = new Command<Animal>(async a => await DeleteAnimalAsync(a));
+            ResetDatabaseCommand = new Command(async () => await ResetDatabaseAsync());
         }
 
         private async Task LoadAsync()
@@ -83,6 +85,27 @@ namespace FeedingApp.ViewModels
 
             await LoadAsync();
             SelectedAnimal = null;
+        }
+
+        private async Task ResetDatabaseAsync()
+        {
+            var confirm = await Shell.Current.DisplayAlert(
+                "Adatbázis visszaállítása",
+                "Minden állat és etetési esemény törlődni fog. Folytatod?",
+                "Igen, töröld",
+                "Mégse");
+
+            if (!confirm)
+                return;
+
+            await _db.ResetDatabaseAsync();
+            Animals.Clear();
+            SelectedAnimal = null;
+
+            await Shell.Current.DisplayAlert(
+                "Sikeres törlés",
+                "Az adatbázis kiürült, mostantól üres adatokat látsz.",
+                "Rendben");
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
