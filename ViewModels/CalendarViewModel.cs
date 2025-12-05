@@ -11,7 +11,7 @@ namespace FeedingApp.ViewModels
 {
     public class CalendarViewModel : INotifyPropertyChanged
     {
-        private readonly DatabaseService _db;
+        private readonly IDatabaseService _db;
 
         public ObservableCollection<Animal> Animals { get; } = new();
         public ObservableCollection<FeedingEvent> Events { get; } = new();
@@ -97,7 +97,7 @@ namespace FeedingApp.ViewModels
 
         private FeedingEvent? _editingEvent;
 
-        public CalendarViewModel(DatabaseService db)
+        public CalendarViewModel(IDatabaseService db)
         {
             _db = db;
 

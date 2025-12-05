@@ -8,7 +8,7 @@ using FeedingApp.Models;
 
 namespace FeedingApp.Services
 {
-    public class DatabaseService
+    public class DatabaseService : IDatabaseService
     {
         private readonly SQLiteAsyncConnection _db;
         private readonly string _dbPath;

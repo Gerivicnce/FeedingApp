@@ -21,7 +21,7 @@ namespace FeedingApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSingleton<DatabaseService>();
+            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
 
             builder.Services.AddSingleton<AnimalsViewModel>();
             builder.Services.AddSingleton<AnimalsPage>();
