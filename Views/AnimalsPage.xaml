@@ -8,11 +8,19 @@
              xmlns:models="clr-namespace:FeedingApp.Models"
              xmlns:views="clr-namespace:FeedingApp.Views">
 
-    <StackLayout Padding="10" Spacing="10">
-        <Button Text="Új állat"
+    <Grid Padding="10" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0"
+                Text="Új állat"
                 Command="{Binding AddAnimalCommand}" />
 
-        <CollectionView x:Name="AnimalsCollection"
+        <CollectionView Grid.Row="1"
+                        x:Name="AnimalsCollection"
                         ItemsSource="{Binding Animals}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedAnimal}">
@@ -37,7 +45,10 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="End">
+        <StackLayout Grid.Row="2"
+                     Orientation="Horizontal"
+                     Spacing="10"
+                     HorizontalOptions="End">
             <Button Text="✏"
                     Command="{Binding EditAnimalCommand}"
                     CommandParameter="{Binding SelectedAnimal}" />
@@ -45,5 +56,5 @@
                     Command="{Binding DeleteAnimalCommand}"
                     CommandParameter="{Binding SelectedAnimal}" />
         </StackLayout>
-    </StackLayout>
+    </Grid>
 </ContentPage>
