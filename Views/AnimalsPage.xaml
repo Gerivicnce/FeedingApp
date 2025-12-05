@@ -34,11 +34,11 @@
 
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
-                                    Command="{Binding Source={x:Reference AnimalsCollection},
+                                    Command="{Binding Source={x:Reference AnimalsPageView},
                                                         Path=BindingContext.EditAnimalCommand}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
-                                    Command="{Binding Source={x:Reference AnimalsCollection},
+                                    Command="{Binding Source={x:Reference AnimalsPageView},
                                                         Path=BindingContext.DeleteAnimalCommand}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
