@@ -1,4 +1,4 @@
-<ContentPage x:Name="AnimalsPage"
+<ContentPage x:Name="AnimalsPageView"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FeedingApp.Views.AnimalsPage"
@@ -32,11 +32,11 @@
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
                                     Command="{Binding BindingContext.EditAnimalCommand,
-                                                      Source={x:Reference AnimalsPage}}"
+                                                      Source={x:Reference AnimalsPageView}}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
                                     Command="{Binding BindingContext.DeleteAnimalCommand,
-                                                      Source={x:Reference AnimalsPage}}"
+                                                      Source={x:Reference AnimalsPageView}}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
                     </Grid>
