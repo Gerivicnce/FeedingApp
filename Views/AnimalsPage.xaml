@@ -1,4 +1,5 @@
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage x:Name="AnimalsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FeedingApp.Views.AnimalsPage"
              Title="Állatok"
@@ -30,12 +31,12 @@
 
                         <StackLayout Grid.Column="1" Orientation="Horizontal">
                             <Button Text="✏"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                                      Path=BindingContext.EditAnimalCommand}"
+                                    Command="{Binding BindingContext.EditAnimalCommand,
+                                                      Source={x:Reference AnimalsPage}}"
                                     CommandParameter="{Binding}" />
                             <Button Text="🗑"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                                      Path=BindingContext.DeleteAnimalCommand}"
+                                    Command="{Binding BindingContext.DeleteAnimalCommand,
+                                                      Source={x:Reference AnimalsPage}}"
                                     CommandParameter="{Binding}" />
                         </StackLayout>
                     </Grid>
