@@ -67,9 +67,22 @@ namespace FeedingApp.ViewModels
 
             var animal = SelectedAnimal;
 
-            await _db.DeleteAnimalAsync(animal);
+            var debugInfo = await _db.DeleteAnimalWithDebugAsync(animal);
             Animals.Remove(animal);
             SelectedAnimal = null;
+
+            var summary = new StringBuilder();
+            summary.AppendLine(debugInfo.Summary ?? "Deletion attempted.");
+            summary.AppendLine($"Database: {debugInfo.DatabasePath}");
+            summary.AppendLine($"Animal Id: {debugInfo.AnimalId}");
+            summary.AppendLine($"Existed before delete: {debugInfo.ExistedBefore}");
+            summary.AppendLine($"Animals before/after: {debugInfo.AnimalsBefore} -> {debugInfo.AnimalsAfter}");
+            summary.AppendLine($"Events for animal before/after: {debugInfo.EventsForAnimalBefore} -> {debugInfo.EventsForAnimalAfter}");
+            summary.AppendLine($"Total events before/after: {debugInfo.FeedingEventsBefore} -> {debugInfo.FeedingEventsAfter}");
+            summary.AppendLine($"Events removed: {debugInfo.FeedingEventsRemoved}");
+            summary.AppendLine($"Animal rows removed: {debugInfo.AnimalRowsRemoved}");
+
+            await Shell.Current.DisplayAlert("Delete debug", summary.ToString(), "OK");
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
