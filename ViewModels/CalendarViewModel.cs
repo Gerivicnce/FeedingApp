@@ -91,8 +91,11 @@ namespace FeedingApp.ViewModels
         public ICommand LoadCommand { get; }
         public ICommand LoadEventsCommand { get; }
         public ICommand SaveFeedingCommand { get; }
+        public ICommand DeleteEventCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private FeedingEvent? _editingEvent;
 
         public CalendarViewModel(DatabaseService db)
         {
@@ -101,6 +104,7 @@ namespace FeedingApp.ViewModels
             LoadCommand = new Command(async () => await LoadAsync());
             LoadEventsCommand = new Command(async () => await LoadEventsAsync());
             SaveFeedingCommand = new Command(async () => await SaveFeedingAsync());
+            DeleteEventCommand = new Command<FeedingEvent>(async e => await DeleteEventAsync(e));
         }
 
         public async Task LoadAsync()
@@ -143,18 +147,65 @@ namespace FeedingApp.ViewModels
         {
             if (SelectedAnimal == null) return;
 
-            var ev = new FeedingEvent
-            {
-                AnimalId = SelectedAnimal.Id,
-                FeedingTime = SelectedDate.Date + DateTime.Now.TimeOfDay,
-                WeightGrams = CurrentWeight,
-                PhotoPath = CurrentPhotoPath,
-                Notes = CurrentNotes
-            };
+            var feedingDate = SelectedDate.Date;
 
-            await _db.SaveEventAsync(ev);
+            if (_editingEvent is not null)
+            {
+                _editingEvent.FeedingTime = feedingDate + _editingEvent.FeedingTime.TimeOfDay;
+                _editingEvent.WeightGrams = CurrentWeight;
+                _editingEvent.PhotoPath = CurrentPhotoPath;
+                _editingEvent.Notes = CurrentNotes;
+
+                await _db.SaveEventAsync(_editingEvent);
+            }
+            else
+            {
+                var ev = new FeedingEvent
+                {
+                    AnimalId = SelectedAnimal.Id,
+                    FeedingTime = feedingDate + DateTime.Now.TimeOfDay,
+                    WeightGrams = CurrentWeight,
+                    PhotoPath = CurrentPhotoPath,
+                    Notes = CurrentNotes
+                };
+
+                await _db.SaveEventAsync(ev);
+            }
+
             await LoadEventsAsync();
 
+            ClearCurrentEntry();
+        }
+
+        public void BeginEdit(FeedingEvent feedingEvent)
+        {
+            _editingEvent = feedingEvent;
+            SelectedDate = feedingEvent.FeedingTime.Date;
+
+            CurrentWeight = feedingEvent.WeightGrams;
+            CurrentPhotoPath = feedingEvent.PhotoPath;
+            CurrentNotes = feedingEvent.Notes;
+        }
+
+        public void StartNewFeeding()
+        {
+            ClearCurrentEntry();
+        }
+
+        private async Task DeleteEventAsync(FeedingEvent? feedingEvent)
+        {
+            if (feedingEvent == null) return;
+
+            await _db.DeleteEventAsync(feedingEvent);
+            await LoadEventsAsync();
+
+            if (_editingEvent?.Id == feedingEvent.Id)
+                ClearCurrentEntry();
+        }
+
+        private void ClearCurrentEntry()
+        {
+            _editingEvent = null;
             CurrentWeight = null;
             CurrentPhotoPath = string.Empty;
             CurrentNotes = string.Empty;
