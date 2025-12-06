@@ -22,12 +22,15 @@
                 <DataTemplate x:DataType="models:FeedingEvent">
                     <Grid Padding="10">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="200" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Image Grid.Row="0"
-                               Aspect="AspectFill"
+                               Aspect="AspectFit"
+                               HeightRequest="250"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
                                Source="{Binding PhotoPath}" />
 
                         <Label Grid.Row="1"
