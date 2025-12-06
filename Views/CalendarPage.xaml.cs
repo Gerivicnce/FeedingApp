@@ -9,12 +9,14 @@ using Microsoft.Maui.Storage;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FeedingApp.Views
 {
     public partial class CalendarPage : ContentPage
     {
         private readonly CalendarViewModel _vm;
+        private bool _isCameraAvailable = true;
 
         public CalendarPage()
         {
@@ -34,6 +36,7 @@ namespace FeedingApp.Views
 
             try
             {
+                await UpdateCameraAvailabilityAsync();
                 await _vm.LoadAsync();
             }
             catch (Exception ex)
@@ -50,6 +53,12 @@ namespace FeedingApp.Views
 
         private async void OnTakePhotoClicked(object sender, EventArgs e)
         {
+            if (!_isCameraAvailable)
+            {
+                await DisplayAlert("Nem elérhető", "A kamera nem érhető el ezen az eszközön. Csatlakoztass kamerát a használathoz.", "OK");
+                return;
+            }
+
             try
             {
                 if (!await EnsureCameraPermissionAsync())
@@ -145,6 +154,20 @@ namespace FeedingApp.Views
 
             status = await Permissions.RequestAsync<Permissions.Camera>();
             return status == PermissionStatus.Granted;
+        }
+
+        private async Task UpdateCameraAvailabilityAsync()
+        {
+            _isCameraAvailable = CameraViewControl.IsAvailable;
+
+            if (!_isCameraAvailable)
+            {
+                await DisplayAlert("Kamera nem érhető el", "Nem található használható kamera. Csatlakoztass kamerát a fotó funkcióhoz!", "OK");
+            }
+
+            TakePhotoButton.IsEnabled = _isCameraAvailable;
+            CameraViewControl.IsVisible = _isCameraAvailable;
+            CameraUnavailableMessage.IsVisible = !_isCameraAvailable;
         }
 
     }
