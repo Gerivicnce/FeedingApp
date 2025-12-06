@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Views;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 
 namespace FeedingApp.Views;
@@ -22,6 +23,12 @@ public partial class CameraCapturePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        if (!await EnsureCameraPermissionAsync())
+        {
+            StatusLabel.Text = "A kamerahasználat nincs engedélyezve.";
+            return;
+        }
 
         if (_selectedCamera is null && Camera.Cameras.Count > 0)
         {
@@ -95,6 +102,28 @@ public partial class CameraCapturePage : ContentPage
             await Shell.Current.DisplayAlert("Hiba", $"A fotózás nem sikerült: {ex.Message}", "OK");
             StatusLabel.Text = "Hiba történt a fotózás során.";
         }
+    }
+
+    private static async Task<bool> EnsureCameraPermissionAsync()
+    {
+        var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+        if (status == PermissionStatus.Granted)
+            return true;
+
+        status = await Permissions.RequestAsync<Permissions.Camera>();
+
+        if (status != PermissionStatus.Granted)
+        {
+            await Shell.Current.DisplayAlert(
+                "Engedély szükséges",
+                "A fotózáshoz kameraengedély szükséges. A beállításokban engedélyezze a hozzáférést.",
+                "OK");
+
+            return false;
+        }
+
+        return true;
     }
 
     private async void OnMediaCaptured(object? sender, MediaCapturedEventArgs e)
