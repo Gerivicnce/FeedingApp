@@ -44,7 +44,6 @@
         <!-- Kamera előnézet -->
         <toolkit:CameraView x:Name="CameraViewControl"
                             Grid.Row="3"
-                            CaptureMode="Photo"
                             HeightRequest="220"
                             HorizontalOptions="Fill" />
 
