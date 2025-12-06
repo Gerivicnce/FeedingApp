@@ -9,13 +9,20 @@
              Title="Galéria"
              x:DataType="viewModels:GalleryViewModel">
 
-    <VerticalStackLayout Padding="10" Spacing="12">
-        <Button Text="Megosztás"
+    <Grid Padding="10" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0"
+                Text="Megosztás"
                 Command="{Binding ShareCommand}"
                 CommandParameter="{Binding SelectedPhoto.PhotoPath}"
                 IsEnabled="{Binding SelectedPhoto, Converter={StaticResource NullToBoolConverter}}" />
 
-        <CollectionView ItemsSource="{Binding Photos}"
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Photos}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedPhoto}">
             <CollectionView.ItemTemplate>
@@ -42,5 +49,5 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
