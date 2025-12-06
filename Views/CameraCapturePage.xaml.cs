@@ -22,9 +22,9 @@ public partial class CameraCapturePage : ContentPage
     {
         base.OnAppearing();
 
-        if (Camera.Camera is null && Camera.Cameras.Count > 0)
+        if (Camera.SelectedCamera is null && Camera.AvailableCameras.Count > 0)
         {
-            Camera.Camera = Camera.Cameras.First();
+            Camera.SelectedCamera = Camera.AvailableCameras.First();
             await StartCameraAsync();
         }
     }
@@ -44,13 +44,13 @@ public partial class CameraCapturePage : ContentPage
 
     private async void OnCamerasLoaded(object? sender, EventArgs e)
     {
-        if (Camera.Cameras.Count == 0)
+        if (Camera.AvailableCameras.Count == 0)
         {
             StatusLabel.Text = "Nem található kamera az eszközön.";
             return;
         }
 
-        Camera.Camera ??= Camera.Cameras.First();
+        Camera.SelectedCamera ??= Camera.AvailableCameras.First();
         await StartCameraAsync();
     }
 
@@ -69,18 +69,18 @@ public partial class CameraCapturePage : ContentPage
 
     private async void OnSwitchCameraClicked(object? sender, EventArgs e)
     {
-        if (Camera.Cameras.Count <= 1)
+        if (Camera.AvailableCameras.Count <= 1)
         {
             await Shell.Current.DisplayAlert("Nincs több kamera", "Az eszközön nem váltható kamera.", "OK");
             return;
         }
 
-        var cameras = Camera.Cameras.ToList();
-        var current = Camera.Camera;
+        var cameras = Camera.AvailableCameras.ToList();
+        var current = Camera.SelectedCamera;
         var currentIndex = current is null ? -1 : cameras.IndexOf(current);
         var nextIndex = currentIndex >= 0 ? (currentIndex + 1) % cameras.Count : 0;
 
-        Camera.Camera = cameras[nextIndex];
+        Camera.SelectedCamera = cameras[nextIndex];
         await StartCameraAsync();
     }
 
