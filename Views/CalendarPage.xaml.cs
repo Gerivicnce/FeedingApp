@@ -9,6 +9,10 @@ using Microsoft.Maui.Storage;
 using System;
 using System.IO;
 using System.Threading;
+#if ANDROID
+using Android.Content;
+using Android.Provider;
+#endif
 
 namespace FeedingApp.Views
 {
@@ -81,11 +85,8 @@ namespace FeedingApp.Views
             try
             {
                 var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-                var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
-
-                await using var stream = e.Media;
-                await using var fileStream = File.OpenWrite(filePath);
-                await stream.CopyToAsync(fileStream);
+                var filePath = await SavePhotoToAppStorageAsync(e.Media, fileName);
+                await SavePhotoToGalleryAsync(filePath, fileName);
 
                 _vm.CurrentPhotoPath = filePath;
             }
@@ -145,6 +146,40 @@ namespace FeedingApp.Views
 
             status = await Permissions.RequestAsync<Permissions.Camera>();
             return status == PermissionStatus.Granted;
+        }
+
+        private static async Task<string> SavePhotoToAppStorageAsync(Stream sourceStream, string fileName)
+        {
+            var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+
+            await using var stream = sourceStream;
+            await using var fileStream = File.OpenWrite(filePath);
+            await stream.CopyToAsync(fileStream);
+
+            return filePath;
+        }
+
+        private static async Task SavePhotoToGalleryAsync(string filePath, string fileName)
+        {
+#if ANDROID
+            var resolver = Android.App.Application.Context.ContentResolver;
+
+            var contentValues = new ContentValues();
+            contentValues.Put(MediaStore.IMediaColumns.DisplayName, fileName);
+            contentValues.Put(MediaStore.IMediaColumns.MimeType, "image/jpeg");
+            contentValues.Put(MediaStore.IMediaColumns.RelativePath, Android.OS.Environment.DirectoryPictures + "/FeedingApp");
+
+            var uri = resolver.Insert(MediaStore.Images.Media.ExternalContentUri, contentValues)
+                ?? throw new InvalidOperationException("Nem sikerlt a kpet a galrihoz adni.");
+
+            await using var outputStream = resolver.OpenOutputStream(uri)
+                ?? throw new InvalidOperationException("Nem sikerlt a galrihoz menteni a kpet.");
+
+            await using var inputStream = File.OpenRead(filePath);
+            await inputStream.CopyToAsync(outputStream);
+#else
+            await Task.CompletedTask;
+#endif
         }
 
     }
