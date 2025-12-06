@@ -43,7 +43,14 @@ namespace FeedingApp.Views
         {
             try
             {
-                var photoStream = await CameraViewControl.TakePhotoAsync();
+                var cameraView = this.FindByName<CommunityToolkit.Maui.Views.CameraView>("CameraViewControl");
+                if (cameraView is null)
+                {
+                    await DisplayAlert("Hiba", "A kamera nézet nem elérhető.", "OK");
+                    return;
+                }
+
+                var photoStream = await cameraView.TakePhotoAsync();
 
                 if (photoStream == null)
                     return;
