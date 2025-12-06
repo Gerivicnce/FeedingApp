@@ -117,8 +117,12 @@
                         <Border Stroke="#e5e7eb"
                                 StrokeShape="RoundRectangle 20"
                                 Padding="14"
-                                BackgroundColor="White"
-                                Shadow="2,2,10,0,0.08">
+                                BackgroundColor="White">
+                            <Border.Shadow>
+                                <Shadow Offset="2,2"
+                                        Radius="10"
+                                        Opacity="0.08" />
+                            </Border.Shadow>
                             <Grid RowDefinitions="Auto,Auto"
                                   ColumnDefinitions="*"
                                   RowSpacing="10">
