@@ -3,7 +3,7 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
               x:Class="FeedingApp.Views.FeedingPopup"
-              CanBeDismissedByTappingOutsideOfPopup="True">
+              CanBeDismissedByTappingOutsideOfPopup="False">
     <VerticalStackLayout Padding="20" Spacing="12">
         <Label Text="Etetési adatok" FontAttributes="Bold" FontSize="18" />
 
@@ -24,6 +24,13 @@
                LineBreakMode="TailTruncation"
                IsVisible="{Binding CurrentPhotoPath, Converter={StaticResource StringNotEmptyConverter}}" />
 
-        <Button Text="Mentés" Clicked="OnSaveClicked" />
+        <HorizontalStackLayout Spacing="8">
+            <Button Text="Mégse"
+                    BackgroundColor="LightGray"
+                    TextColor="Black"
+                    Clicked="OnCancelClicked" />
+
+            <Button Text="Mentés" Clicked="OnSaveClicked" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </toolkit:Popup>
