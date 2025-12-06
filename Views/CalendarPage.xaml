@@ -35,7 +35,6 @@
         <!-- Fotó készítése és etetés felvétele -->
         <HorizontalStackLayout Grid.Row="2" Spacing="8">
             <Button Text="📷 Fotó"
-                    x:Name="TakePhotoButton"
                     Clicked="OnTakePhotoClicked" />
 
             <Button Text="Új etetés"
@@ -47,13 +46,6 @@
                             Grid.Row="3"
                             HeightRequest="220"
                             HorizontalOptions="Fill" />
-
-        <Label x:Name="CameraUnavailableMessage"
-               Grid.Row="3"
-               Text="A kamera nem érhető el ezen az eszközön. Csatlakoztass kamerát a fotózáshoz."
-               TextColor="Tomato"
-               Padding="8"
-               IsVisible="False" />
 
         <!-- Tájékoztatás a fotó mentéséről -->
         <ContentView Grid.Row="4">
