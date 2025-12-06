@@ -50,7 +50,7 @@ namespace FeedingApp.Views
                     return;
                 }
 
-                var photoStream = await cameraView.TakePhotoAsync();
+                var photoStream = await cameraView.CapturePhotoAsync();
 
                 if (photoStream == null)
                     return;
