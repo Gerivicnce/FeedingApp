@@ -45,13 +45,7 @@ public partial class FeedingPopup : Popup
 
             if (action == "Új fotó készítése")
             {
-                if (!MediaPicker.Default.IsCaptureSupported)
-                {
-                    await Shell.Current.DisplayAlert("Nem elérhető", "Ez a platform nem támogatja a fotó készítést.", "OK");
-                    return;
-                }
-
-                await CaptureAndSavePhotoAsync(vm);
+                await Shell.Current.Navigation.PushModalAsync(new CameraCapturePage(path => vm.CurrentPhotoPath = path));
             }
             else if (action == "Meglévő fotó kiválasztása")
             {
@@ -61,27 +55,6 @@ public partial class FeedingPopup : Popup
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Hiba", $"A fotó mentése nem sikerült: {ex.Message}", "OK");
-        }
-    }
-
-    private static async Task CaptureAndSavePhotoAsync(CalendarViewModel vm)
-    {
-        try
-        {
-            var result = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
-            {
-                Title = "Etetési fotó"
-            });
-
-            await SavePhotoResultAsync(result, vm);
-        }
-        catch (PermissionException ex)
-        {
-            await Shell.Current.DisplayAlert("Hozzáférés megtagadva", $"A művelet engedélyt igényel: {ex.Message}", "OK");
-        }
-        catch (FeatureNotSupportedException)
-        {
-            await Shell.Current.DisplayAlert("Nem elérhető", "Ez a platform nem támogatja a fotó készítést.", "OK");
         }
     }
 
