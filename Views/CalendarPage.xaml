@@ -82,9 +82,10 @@
                             <Label Text="{Binding Notes}"
                                    IsVisible="{Binding Notes, Converter={StaticResource StringNotEmptyConverter}}"
                                    FontSize="12" />
-                            <Label Text="📷 Fotó csatolva"
-                                   FontSize="12"
-                                   TextColor="SlateGray"
+                            <Image Source="{Binding PhotoPath}"
+                                   Aspect="AspectFill"
+                                   HeightRequest="160"
+                                   WidthRequest="240"
                                    IsVisible="{Binding PhotoPath, Converter={StaticResource StringNotEmptyConverter}}" />
 
                             <HorizontalStackLayout Spacing="8" Margin="0,6,0,0">
