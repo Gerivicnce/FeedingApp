@@ -1,9 +1,14 @@
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using FeedingApp.Models;
+using FeedingApp.Services;
 using FeedingApp.ViewModels;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace FeedingApp.Views
 {
@@ -11,12 +16,16 @@ namespace FeedingApp.Views
     {
         private readonly CalendarViewModel _vm;
 
-        public CalendarPage(CalendarViewModel vm)
+        public CalendarPage()
         {
             InitializeComponent();
 
-            _vm = vm;
+            var db = new DatabaseService();
+            _vm = new CalendarViewModel(db);
             BindingContext = _vm;
+
+            // kamera event feliratkozs
+            CameraViewControl.MediaCaptured += OnMediaCaptured;
         }
 
         protected override async void OnAppearing()
@@ -43,26 +52,22 @@ namespace FeedingApp.Views
         {
             try
             {
-                var cameraView = this.FindByName<CommunityToolkit.Maui.Views.CameraView>("CameraViewControl");
-                if (cameraView is null)
+                if (!await EnsureCameraPermissionAsync())
                 {
-                    await DisplayAlert("Hiba", "A kamera nézet nem elérhető.", "OK");
+                    await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges.", "OK");
                     return;
                 }
 
-                var photoStream = await cameraView.CapturePhotoAsync();
-
-                if (photoStream == null)
+                if (!CameraViewControl.IsAvailable)
+                {
+                    await DisplayAlert("Nem elérhető", "A kamera nem érhető el ezen az eszközön.", "OK");
                     return;
+                }
 
-                var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-                var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
-
-                await using var stream = photoStream;
-                await using var fileStream = File.OpenWrite(filePath);
-                await stream.CopyToAsync(fileStream);
-
-                _vm.CurrentPhotoPath = filePath;
+                using var cts = new CancellationTokenSource();
+                // Ez csak elindtja a fot ksztst,
+                // a stream az OnMediaCaptured-ben jn meg
+                await CameraViewControl.CaptureImage(cts.Token);
             }
             catch (Exception ex)
             {
@@ -70,12 +75,30 @@ namespace FeedingApp.Views
             }
         }
 
-        private async void OnAddFeedingClicked(object sender, EventArgs e)
+        // Itt kapod meg tnylegesen a fot streamjt
+        private async void OnMediaCaptured(object? sender, MediaCapturedEventArgs e)
         {
-            _vm.StartNewFeeding();
+            try
+            {
+                var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
+                await using var stream = e.Media;
+                await using var fileStream = File.OpenWrite(filePath);
+                await stream.CopyToAsync(fileStream);
+
+                _vm.CurrentPhotoPath = filePath;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Hiba", $"Nem sikerlt fott menteni: {ex.Message}", "OK");
+            }
+        }
+
+        private void OnAddFeedingClicked(object sender, EventArgs e)
+        {
             var popup = new FeedingPopup(_vm);
-            await this.ShowPopupAsync(popup);
+            this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
         }
 
         private async void OnEditEventClicked(object sender, EventArgs e)
@@ -107,6 +130,19 @@ namespace FeedingApp.Views
             {
                 await DisplayAlert("Hiba", $"Az etetés törlése nem sikerült: {ex.Message}", "OK");
             }
+        }
+
+        private static async Task<bool> EnsureCameraPermissionAsync()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+            if (status == PermissionStatus.Granted)
+            {
+                return true;
+            }
+
+            status = await Permissions.RequestAsync<Permissions.Camera>();
+            return status == PermissionStatus.Granted;
         }
 
     }
