@@ -64,12 +64,16 @@ namespace FeedingApp.Views
                 if (!await EnsureCameraPermissionAsync())
                 {
                     await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges.", "OK");
+                    _isCameraAvailable = false;
+                    ApplyCameraAvailabilityState();
                     return;
                 }
 
                 if (!CameraViewControl.IsAvailable)
                 {
                     await DisplayAlert("Nem elérhető", "A kamera nem érhető el ezen az eszközön.", "OK");
+                    _isCameraAvailable = false;
+                    ApplyCameraAvailabilityState();
                     return;
                 }
 
@@ -81,6 +85,8 @@ namespace FeedingApp.Views
             catch (Exception ex)
             {
                 await DisplayAlert("Hiba", $"Nem sikerlt fott kszteni: {ex.Message}", "OK");
+                _isCameraAvailable = false;
+                ApplyCameraAvailabilityState();
             }
         }
 
@@ -156,18 +162,43 @@ namespace FeedingApp.Views
             return status == PermissionStatus.Granted;
         }
 
-        private async Task UpdateCameraAvailabilityAsync()
+        private void ApplyCameraAvailabilityState()
         {
-            _isCameraAvailable = CameraViewControl.IsAvailable;
-
-            if (!_isCameraAvailable)
-            {
-                await DisplayAlert("Kamera nem érhető el", "Nem található használható kamera. Csatlakoztass kamerát a fotó funkcióhoz!", "OK");
-            }
-
             TakePhotoButton.IsEnabled = _isCameraAvailable;
             CameraViewControl.IsVisible = _isCameraAvailable;
             CameraUnavailableMessage.IsVisible = !_isCameraAvailable;
+        }
+
+        private async Task UpdateCameraAvailabilityAsync()
+        {
+            try
+            {
+                var hasPermission = await EnsureCameraPermissionAsync();
+
+                if (!hasPermission)
+                {
+                    _isCameraAvailable = false;
+                    ApplyCameraAvailabilityState();
+                    await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges. Engedélyezd a kamerát a fotó készítéséhez!", "OK");
+                    return;
+                }
+
+                _isCameraAvailable = CameraViewControl.IsAvailable;
+
+                if (!_isCameraAvailable)
+                {
+                    await DisplayAlert("Kamera nem érhető el", "Nem található használható kamera. Csatlakoztass kamerát a fotó funkcióhoz!", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                _isCameraAvailable = false;
+                await DisplayAlert("Kamera hiba", $"A kamera elérhetőségének ellenőrzése nem sikerült: {ex.Message}", "OK");
+            }
+            finally
+            {
+                ApplyCameraAvailabilityState();
+            }
         }
 
     }
