@@ -1,10 +1,10 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using CommunityToolkit.Maui.Views;
 using FeedingApp.ViewModels;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace FeedingApp.Views;
 
@@ -33,24 +33,7 @@ public partial class FeedingPopup : Popup
 
         try
         {
-            var action = await Shell.Current.DisplayActionSheet(
-                "Fotó hozzáadása",
-                "Mégse",
-                null,
-                "Új fotó készítése",
-                "Meglévő fotó kiválasztása");
-
-            if (string.IsNullOrEmpty(action) || action == "Mégse")
-                return;
-
-            if (action == "Új fotó készítése")
-            {
-                await Shell.Current.Navigation.PushModalAsync(new CameraCapturePage(path => vm.CurrentPhotoPath = path));
-            }
-            else if (action == "Meglévő fotó kiválasztása")
-            {
-                await PickAndSavePhotoAsync(vm);
-            }
+            await PickAndSavePhotoAsync(vm);
         }
         catch (Exception ex)
         {
