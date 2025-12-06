@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -40,8 +41,15 @@
                     Clicked="OnAddFeedingClicked" />
         </HorizontalStackLayout>
 
+        <!-- Kamera előnézet -->
+        <toolkit:CameraView x:Name="CameraViewControl"
+                            Grid.Row="3"
+                            CaptureMode="Photo"
+                            HeightRequest="220"
+                            HorizontalOptions="Fill" />
+
         <!-- Tájékoztatás a fotó mentéséről -->
-        <ContentView Grid.Row="3">
+        <ContentView Grid.Row="4">
             <Label Text="Az itt készített fotó a telefon galériájába kerül, így az &quot;Új etetés&quot; ablakban is kiválaszthatod."
                    Padding="4,8"
                    TextColor="Gray"
@@ -49,7 +57,7 @@
         </ContentView>
 
         <!-- Az adott nap etetései -->
-        <CollectionView Grid.Row="4"
+        <CollectionView Grid.Row="5"
                         ItemsSource="{Binding Events}">
             <CollectionView.EmptyView>
                 <Label Text="Nincs etetés ezen a napon."
@@ -99,7 +107,7 @@
         </CollectionView>
 
         <!-- Opció: aktuális fotó elérési útja -->
-        <Label Grid.Row="5"
+        <Label Grid.Row="6"
                Text="{Binding CurrentPhotoPath}"
                FontSize="10" />
     </Grid>

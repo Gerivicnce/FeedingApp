@@ -1,8 +1,9 @@
 using CommunityToolkit.Maui.Views;
-using FeedingApp.ViewModels;
-using System;
-using Microsoft.Maui.ApplicationModel;
 using FeedingApp.Models;
+using FeedingApp.ViewModels;
+using Microsoft.Maui.Storage;
+using System;
+using System.IO;
 
 namespace FeedingApp.Views
 {
@@ -42,27 +43,19 @@ namespace FeedingApp.Views
         {
             try
             {
-                if (!await EnsureCameraPermissionAsync())
-                {
-                    await DisplayAlert("Engedély szükséges", "A kamera használatához engedély szükséges.", "OK");
-                    return;
-                }
+                var photoStream = await CameraViewControl.TakePhotoAsync();
 
-                if (!MediaPicker.Default.IsCaptureSupported)
-                {
-                    await DisplayAlert("Nem elérhető", "Ez a platform nem támogatja a fotó készítést.", "OK");
-                    return;
-                }
-
-                var result = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
-                {
-                    Title = "Etetési fotó"
-                });
-
-                if (result == null)
+                if (photoStream == null)
                     return;
 
-                _vm.CurrentPhotoPath = result.FullPath;
+                var fileName = $"feeding_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+
+                await using var stream = photoStream;
+                await using var fileStream = File.OpenWrite(filePath);
+                await stream.CopyToAsync(fileStream);
+
+                _vm.CurrentPhotoPath = filePath;
             }
             catch (Exception ex)
             {
@@ -109,17 +102,5 @@ namespace FeedingApp.Views
             }
         }
 
-        private static async Task<bool> EnsureCameraPermissionAsync()
-        {
-            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
-
-            if (status == PermissionStatus.Granted)
-            {
-                return true;
-            }
-
-            status = await Permissions.RequestAsync<Permissions.Camera>();
-            return status == PermissionStatus.Granted;
-        }
     }
 }
