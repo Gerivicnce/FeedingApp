@@ -26,6 +26,11 @@ public partial class FeedingPopup : Popup
         await CloseAsync();
     }
 
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await CloseAsync();
+    }
+
     private async void OnPickPhotoClicked(object sender, EventArgs e)
     {
         if (BindingContext is not CalendarViewModel vm)

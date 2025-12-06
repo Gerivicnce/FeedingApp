@@ -95,10 +95,12 @@ namespace FeedingApp.Views
             }
         }
 
-        private void OnAddFeedingClicked(object sender, EventArgs e)
+        private async void OnAddFeedingClicked(object sender, EventArgs e)
         {
+            _vm.StartNewFeeding();
+
             var popup = new FeedingPopup(_vm);
-            this.ShowPopup(popup);   // lsd a kvetkez pontot a using-hoz
+            await this.ShowPopupAsync(popup);   // lsd a kvetkez pontot a using-hoz
         }
 
         private async void OnEditEventClicked(object sender, EventArgs e)
